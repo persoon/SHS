@@ -7,10 +7,9 @@ class Parameters:
 
     def __init__(self):
         self.horizon = 24
-        self.mult = int(self.horizon / 24)
 
-        '''
-        price_schema = [
+
+        self.old_ps = [
             0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198,
             0.225, 0.225, 0.225, 0.225,
             0.249, 0.249,
@@ -18,8 +17,8 @@ class Parameters:
             0.225, 0.225, 0.225, 0.225,
             0.198, 0.198
         ]
-        '''
 
+        '''
         self.old_ps = [
             0.198, 0.849, 0.849, 0.198, 0.849, 0.198, 0.849, 0.198,
             0.225, 0.225, 0.225, 0.225,
@@ -28,8 +27,13 @@ class Parameters:
             0.225, 0.225, 0.849, 0.225,
             0.198, 0.198
         ]
-
+        '''
         self.price_schema = []
+
+
+    def scale_factor(self, file_horizon):
+        scale = int(self.horizon / file_horizon)
         for k in range(0, len(self.old_ps)):
-            for p in range(0, self.mult):
+            for p in range(0, scale):
                 self.price_schema.append(self.old_ps[k])
+        return scale

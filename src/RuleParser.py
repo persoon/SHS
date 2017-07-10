@@ -15,7 +15,7 @@ def parse_rules(filename):
     file_horizon = None
     with open(filename, 'r') as csvfile:
         reader = csv.reader(csvfile, delimiter='\t')
-        file_horizon = next(reader)[0]
+        file_horizon = int(next(reader)[0])
         for row in reader:
             active = True if int(row[0]) == 1 else False
             sp = row[1]

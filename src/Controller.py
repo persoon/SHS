@@ -5,7 +5,7 @@ import src.Solver as solver
 
 def execute():
     parameters = src.Parameters.Parameters()
-    rules, file_horizon = rp.parse_rules('../resources/input/rules.txt')
+    rules, file_horizon = rp.parse_rules('resources/input/rules.txt')
 
-    solver.solve(parameters, rules)
+    solver.solve(parameters, rules, file_horizon)
 

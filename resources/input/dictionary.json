@@ -1,0 +1,59 @@
+{
+  "washer":{
+    "GE_WSM2420D3WW":{
+      "modes":{
+        "regular":[
+          {
+            "name": "wash",
+            "kWh": 0.007,
+            "duration": 15.0
+          },
+          {
+            "name": "spin",
+            "kWh": 0.008,
+            "duration": 15.0
+          },
+          {
+            "name": "rinse",
+            "kWh": 0.008,
+            "duration": 15.0
+          }
+        ],
+        "perm_press":[
+          {
+            "name": "wash",
+            "kWh": 0.007,
+            "duration": 15.0
+          },
+          {
+            "name": "spin",
+            "kWh": 0.007,
+            "duration": 15.0
+          },
+          {
+            "name": "rinse",
+            "kWh": 0.008,
+            "duration": 15.0
+          }
+        ],
+        "delicate":[
+          {
+            "name": "wash",
+            "kWh": 0.007,
+            "duration": 15.0
+          },
+          {
+            "name": "spin",
+            "kWh": 0.007,
+            "duration": 15.0
+          },
+          {
+            "name": "rinse",
+            "kWh": 0.008,
+            "duration": 15.0
+          }
+        ]
+      }
+    }
+  }
+}

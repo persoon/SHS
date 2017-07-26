@@ -5,6 +5,8 @@ import src.RuleParser
 import cplex
 from cplex.exceptions import CplexError
 
+# TODO: idea: make heater take in an array of predicted heats --- can take into account outside weather forecast / oven
+
 model = cplex.Cplex()
 
 def setup(parameters):
@@ -13,7 +15,6 @@ def setup(parameters):
     global price_schema
     global horizon
     global scale_factor
-    global rule
     global max_val
 
     price_schema = parameters.price_schema
@@ -51,170 +52,89 @@ def convert_rules(rules, scale_factor):
 def add_rules(rules):
     for r in range(len(rules)):
         print(rules[r].to_string())
-        add_rule_constraints(rule=rules[r], r_index=r)
+        add_rule_constraints(rule=rules[r])
 
 
-def add_rule_constraints(rule, r_index):
-    # TODO: create at, within constraints
-    # TODO: make constraint for {<= , =} (duration stuff...)
-    # TODO: make time1, time2 non-global
+# todo: add input for kWh usage for price objective
+def create_phase(st_var, s_time, f_time, duration):
 
-    global duration
-    global time1
-    global time2
-    global duration1
-    global duration2
+    price = 0
+    for i in range(s_time, s_time + duration):
+        price += price_schema[i]
 
-    active = rule.active
-    sp = rule.sp
-    predicate = rule.predicate
+    p_array = [None] * (f_time - duration - s_time)
+    p_array[0] = price
+    for i in range(s_time, f_time - duration):
+        price += price_schema[i]
+        price -= price_schema[i - duration - 1]
+        p_array[i - s_time - duration] = price
+
+    # add start time 1 variable
+    model.variables.add(
+        names=[st_var],
+        types=[model.variables.type.integer]
+    )
+
+    # add variables for first phase
+    model.variables.add(
+        names=[st_var + '_' + str(k) for k in range(s_time, f_time - duration)],
+        types=[model.variables.type.integer] * (f_time - duration - s_time),
+        obj=p_array
+    )
+
+    model.linear_constraints.add(
+        lin_expr=[
+            cplex.SparsePair(
+                ind=[st_var + '_' + str(k) for k in range(s_time, f_time - duration)],
+                val=[1.0] * (f_time - s_time - duration)
+            )],
+        rhs=[1.0],
+        senses=['E']
+    )
+
+    # add constraint to set start time 1
+    for k in range(s_time, f_time - duration):
+        model.indicator_constraints.add(
+            indvar=st_var + '_' + str(k),
+            complemented=0,
+            rhs=k,
+            sense='E',
+            lin_expr=cplex.SparsePair(ind=[st_var], val=[1.0])
+        )
+
+
+def connect_phases(st_var1, st_var2, duration1):
+    # add constraint making start time 2 > start time 1 + duration1
+    model.linear_constraints.add(
+        lin_expr=[cplex.SparsePair(ind=[st_var2, st_var1], val=[1.0, -1.0])],
+        senses=['G'],
+        rhs=[duration1]
+    )
+
+
+def add_rule_constraints(rule):
     goal = rule.goal
-    prefix = rule.prefix
     time1 = rule.time1
     time2 = rule.time2 + 1
 
     duration = 0
     t_goal = 0
-    phases = 1
-    duration1 = 4
-    duration2 = duration - duration1
 
     while t_goal < goal:
         t_goal += max_val
         duration += 1
 
+    print('duration:', duration)
+    duration1 = 3
+    duration2 = duration - duration1
+
     if duration > time2 - time1:
         raise Exception('S1: No solution. Goal cannot be met within time specified.')
 
-    price = 0
-    for i in range(time1, time1+duration):
-        price += price_schema[i]
+    create_phase('st1', time1, time2 - duration2, duration1)
+    create_phase('st2', time1 + duration1, time2, duration2)
+    connect_phases('st1', 'st2', duration1)
 
-    #################all code for multiple phases in here #####################
-    if phases == 1:
-
-        ##add price goal for first phase##
-        p_array1 = [None] * (time2 - duration1 - time1 - duration2)
-        p_array1[0] = price
-        for i in range(time1, time2 - duration2 - duration1):
-            price += price_schema[i]
-            price -= price_schema[i - duration1 - duration2 - 1]
-            p_array1[i - (time1 + duration1 + duration2)] = price
-
-        print('DURATIONS:')
-        print(duration)
-        print(duration1)
-        print(duration2)
-
-        ##price objective for 2nd phase##
-        p_array2 = [None] * (time2 - (time1 + duration1) - duration2)
-        p_array2[0] = price
-        for i in range(time1 + duration1, time2 - duration2):
-            price += price_schema[i]
-            price -= price_schema[i - duration2 - 1]
-            p_array2[i - (time1 + duration1)] = price
-
-        ##add variables for first phase##
-        model.variables.add(
-            names=['st_' + str(r_index) + '_' + str(k) for k in range(time1, time2 - duration1 - duration2)],
-            types=[model.variables.type.integer] * (time2 - duration1 - time1 - duration2),
-            obj=p_array1
-        )
-
-        ##add variables for second phase##
-        model.variables.add(
-            names=['st_' + str(r_index) + '_2_' + str(k) for k in range(time1 + duration1, time2 - duration2)],
-            types=[model.variables.type.integer] * (time2 - duration2 - (time1 + duration1)),
-            obj=p_array2
-        )
-
-        ##constraint to get first start time##
-        model.linear_constraints.add(
-            lin_expr=[
-                cplex.SparsePair(
-                    ind=['st_' + str(r_index) + '_' + str(k) for k in range(time1, time2 - duration1 - duration2)],
-                    val=[1.0] * (time2 - duration1 - time1 - duration2))],
-            rhs=[1.0],
-            senses=['E']
-        )
-
-        ##constraint to get 2nd start time##
-        model.linear_constraints.add(
-            lin_expr=[
-                cplex.SparsePair(
-                    ind=['st_' + str(r_index) + '_2_' + str(k) for k in range(time1 + duration1, time2 - duration2)],
-                    val=[1.0] * (time2 - (time1 + duration1) - duration2))],
-            rhs=[1.0],
-            senses=['E']
-        )
-
-        #add start time 1 variable
-        model.variables.add(
-            names=['st1'],
-            types=[model.variables.type.integer]
-        )
-
-        #add constraint to set start time 1
-        for k in range (time1, time2-duration1-duration2):
-            model.indicator_constraints.add(
-                indvar='st_' + str(r_index) + '_' + str(k),
-                complemented=1,
-                rhs=k,
-                sense='E',
-                lin_expr=cplex.SparsePair(ind=['st1'], val=[k])
-
-            )
-
-        #add start time 2 variable
-        model.variables.add(
-            names=['st2'],
-            types=[model.variables.type.integer]
-        )
-
-    #add constraint to set start time 2
-        for k in range(time1 + duration1, time2 - duration2):
-            model.indicator_constraints.add(
-                indvar='st_' + str(r_index) + '_2_' + str(k),
-                complemented=1,
-                rhs=k,
-                sense='E',
-                lin_expr=cplex.SparsePair(ind=['st2'], val=[k])
-
-        )
-
-        '''''
-        #add constraint making start time 2 > start time 1 + duration1
-        model.linear_constraints.add(
-            lin_expr= [cplex.SparsePair(ind=['st2', 'st1'], val=[1.0, -1.0])],
-            senses=['G'],
-            rhs=[1.0]
-        )
-        '''
-
-#################END PHASES CODE##############################
-
-    p_array = [None] * (time2 - time1 - duration)
-    p_array[0] = price
-    for i in range(time1+duration, time2):
-        price += price_schema[i]
-        price -= price_schema[i - duration - 1]
-        p_array[i - (time1+duration)] = price
-
-
-
-    # start time variable
-    model.variables.add(
-        names=['st_' + str(r_index) + '_' + str(k) for k in range(time1, time2 - duration)],
-        types=[model.variables.type.integer] * (time2 - duration - time1),
-        obj=p_array
-    )
-
-    model.linear_constraints.add(
-        lin_expr=[cplex.SparsePair(ind=['st_' + str(r_index) + '_' + str(k) for k in range(time1, time2 - duration)],
-                                   val=[1.0] * (time2 - duration - time1))],
-        rhs=[1.0],
-        senses=['E']
-    )
 
 
 def solve(parameters, rules, file_horizon):
@@ -224,9 +144,14 @@ def solve(parameters, rules, file_horizon):
         setup(parameters)
         convert_rules(rules, scale)
         add_rules(rules)
+        # rule = rules[0]
+
         model.solve()
 
         solution = model.solution
+        time1 = rules[0].time1
+        time2 = rules[0].time2
+        duration1 = rules[0]
 
         print()
         print("Solution status: ", solution.get_status())
@@ -239,16 +164,22 @@ def solve(parameters, rules, file_horizon):
         print()
         '''
 
-        print('st:       ', end='\t')
+        print('st:       ', end='\n\n')
         for k in range(time1, time2 - duration):
-            print(solution.get_values("st_0_" + str(k)), end='\t')
+            print(abs(solution.get_values("st1_" + str(k))), end=' ')
         print()
         print()
 
         for k in range(time1 + duration1, time2 - duration2):
-            print(solution.get_values("st_0_2_" + str(k)), end='\t')
+            print(abs(solution.get_values("st2_" + str(k))), end=' ')
         print()
         print()
+
+        print('st1:', end='\n\n')
+        print(abs(solution.get_values("st1")))
+
+        print('st2:', end='\n\n')
+        print(abs(solution.get_values("st2")))
 
         '''
         print('s prop:   ', end='\t')

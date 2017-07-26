@@ -8,7 +8,6 @@ class Parameters:
     def __init__(self):
         self.horizon = 24
 
-
         self.old_ps = [
             0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198,
             0.225, 0.225, 0.225, 0.225,

@@ -1,2 +1,2 @@
 24
-1	wash	geq	4	before	11
+1	wash	geq	15	after	4

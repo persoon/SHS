@@ -11,18 +11,13 @@
 #   time1       - Time step the rule applies to
 #   time2       - Secondary time step used for 'within' rules
 
-import src.Parameters
-
 # TODO: add function for switching granularities
 # TODO: explain how rules work
 # TODO: add location
-parameters = src.Parameters.Parameters()
-horizon = parameters.horizon
-
 
 class Rule:
     def __init__(self, active, sp, predicate,
-                 goal, prefix, time1, time2):
+                 goal, prefix, time1, time2, horizon):
         self.active = active
         self.sp = sp
         self.predicate = predicate

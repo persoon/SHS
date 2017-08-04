@@ -2,53 +2,33 @@
 
 import src.Rule
 import src.RuleParser
+import src.Parameters as parameters
 import cplex
 from cplex.exceptions import CplexError
 
 # TODO: idea: make heater take in an array of predicted heats --- can take into account outside weather forecast / oven
 
-model = cplex.Cplex()
+model = src.Parameters.Parameters().model  # cplex.Cplex()
 
-def setup(parameters):
+def setup():
     # TODO: make a function for converting rules to a different granularity
 
     global price_schema
     global horizon
     global scale_factor
     global max_val
+    global rules
 
-    price_schema = parameters.price_schema
-    horizon = parameters.horizon
-
-    # action deltas and power consumptions will be mapped to this in the future:
-    # ac_washer = {}
-
-    # for now, the deltas for the washing actions are 0 or 1
-    ac_washer = [0, 1]  # TODO: switch this over and map deltas to actions
-    de_washer = [0, 1]
-
-    SP_MAX = [None] * horizon  # maximum possible value of this sensor property state at each timestep
-    SP_MIN = [None] * horizon  # minimum      "       "       "       "       "       "       "
-
-    max_val = max(de_washer)
-    min_val = min(de_washer)
-
-    # upper and lower bounds
-    for i in range(0, horizon):
-        SP_MAX[i] = max_val * (i + 1)
-        SP_MIN[i] = min_val * (i + 1)
-
+    price_schema = parameters.Parameters().price_schema
+    horizon = parameters.Parameters().horizon
+    rules = parameters.Parameters().rules
     # setting objective to minimize
     model.objective.set_sense(model.objective.sense.minimize)
 
-    # objective cost should be calculated based on objectives
+    add_rules(rules)
 
-def convert_rules(rules, scale_factor):
-    for r in range(len(rules)):
-        rules[r].time1 *= scale_factor
-        rules[r].time2 *= scale_factor
-    return rules
 
+# todo: In the future this will read in each rule and determine which device to use.
 def add_rules(rules):
     for r in range(len(rules)):
         print(rules[r].to_string())
@@ -116,13 +96,14 @@ def add_rule_constraints(rule):
     goal = rule.goal
     time1 = rule.time1
     time2 = rule.time2 + 1
-
+    global duration1
+    global duration2
     duration = 0
     t_goal = 0
 
-    while t_goal < goal:
-        t_goal += max_val
-        duration += 1
+    # TODO: duration needs to be calculated for actuators with a sensor property delta
+    # duration = goal / delta
+    #########################
 
     print('duration:', duration)
     duration1 = 3
@@ -136,14 +117,11 @@ def add_rule_constraints(rule):
     connect_phases('st1', 'st2', duration1)
 
 
-
-def solve(parameters, rules, file_horizon):
+def solve():
     # TODO: fix '-0.0' return value bug
     try:
-        scale = parameters.scale_factor(file_horizon=file_horizon)
-        setup(parameters)
-        convert_rules(rules, scale)
-        add_rules(rules)
+        setup()
+
         # rule = rules[0]
 
         model.solve()
@@ -151,7 +129,7 @@ def solve(parameters, rules, file_horizon):
         solution = model.solution
         time1 = rules[0].time1
         time2 = rules[0].time2
-        duration1 = rules[0]
+        # duration1 = rules[0]
 
         print()
         print("Solution status: ", solution.get_status())
@@ -165,7 +143,7 @@ def solve(parameters, rules, file_horizon):
         '''
 
         print('st:       ', end='\n\n')
-        for k in range(time1, time2 - duration):
+        for k in range(time1, time2 - duration1):
             print(abs(solution.get_values("st1_" + str(k))), end=' ')
         print()
         print()

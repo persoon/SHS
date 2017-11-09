@@ -1,2 +1,2 @@
 24
-1	wash	geq	15	after	4
+1	1	d:GE_WSM2420D3WW	wash	regular	-	before	24

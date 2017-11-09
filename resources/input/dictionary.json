@@ -1,6 +1,7 @@
 {
   "washer":{
     "GE_WSM2420D3WW":{
+      "name": "GE_WSM2420D3WW",
       "modes":{
         "regular":[
           {
@@ -50,6 +51,79 @@
           {
             "name": "rinse",
             "kWh": 0.008,
+            "duration": 15.0
+          }
+        ]
+      }
+    }
+  },
+  "dryer":{
+    "GE_WSM2420D3WW":{
+      "name": "GE_WSM2420D3WW",
+      "modes":{
+        "regular":[
+          {
+            "name": "dry",
+            "kWh": 0.027,
+            "duration": 45.0
+          }
+        ],
+        "perm_press":[
+          {
+            "name": "dry",
+            "kWh": 0.024,
+            "duration": 45.0
+          }
+        ],
+        "timed":[
+          {
+            "name": "dry",
+            "kWh": 0.028,
+            "duration": 45.0
+          }
+        ]
+      }
+    }
+  },
+  "oven":{
+    "Kenmore_790":{
+      "name": "Kenmore_790",
+      "modes":{
+        "bake":[
+          {
+            "name": "cook",
+            "kWh": 0.037,
+            "duration": 60.0
+          }
+        ],
+        "broil":[
+          {
+            "name": "cook",
+            "kWh": 0.042,
+            "duration": 60.0
+          }
+        ]
+      }
+    }
+  },
+  "dishwasher":{
+    "Kenmore_665":{
+      "name": "Kenmore_665",
+      "modes":{
+        "wash":[
+          {
+            "name": "wash",
+            "kWh": 0.006,
+            "duration": 15.0
+          },
+          {
+            "name": "rinse",
+            "kWh": 0.009,
+            "duration": 15.0
+          },
+          {
+            "name": "dry",
+            "kWh": 0.006,
             "duration": 15.0
           }
         ]

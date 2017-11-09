@@ -1,43 +1,204 @@
 import src.Parameters
-import src.RuleParser as rp
+import src.RuleParser as RP
+import src.Rule as R
 import src.Reader
 import cplex
 from cplex.exceptions import CplexError
+import numpy
+import time
+import random
+
+# TODO --- what needs to happen: --------------------------------------------------------
+# read paper about HVAC
+# clean stuff up, comment, go through some TODO's
+
+params = src.Parameters.Parameters()
+
 
 def execute():
-
     dictionary = src.Reader.Reader().get_dictionary()
-    device = dictionary.get_device(type='washer', name='GE_WSM2420D3WW')
 
-    # adding the device constraints and price objective:
-    variables = device.add_constraints(src.Parameters.Parameters().rules[0])
-    # sending the variables through the power objective:
+    '''
+    text = ''
+    text += run_experiment(num_devs=20, timeout=10, dictionary=dictionary)
+    src.Parameters.Parameters().reset_solver()
+    text += run_experiment(num_devs=20, timeout=60, dictionary=dictionary)
+    src.Parameters.Parameters().reset_solver()
+    text += run_experiment(num_devs=20, timeout=300, dictionary=dictionary)
+    '''
+    devices = generate_devices(type='washer', num_devs=1, model="GE_WSM2420D3WW")
+    # devices = generate_devices(type='mix')
+    rules = []
+    for i in range(len(devices)):
+        print(devices[i].to_string())
+        rules.append(generate_rule(devices[i]))
+        print(rules[i].to_string())
+        print()
+
+    f = open('resources/output/schedule.txt', 'w')
+    f.write(run_experiment(timeout=10, devices=devices, rules=rules))
+    f.close()
 
 
-    model = src.Parameters.Parameters().model
+# generates devices
+# does not add device variables, make sure to add those
+# inputs:
+#   type -- determines which devices to generate
+#       'mix' : makes a perfect mix, one of each device type created so far -- then repeats
+#       'random' : generates random devices
+#       dtype (e.g. 'washer'): to generate a number of that type of device
+#       default: 'random'
+#   num_devs -- determines number of devices to generate
+#       default: 4
+#   OPTIONAL::model -- this is here for when I add more than one model of any type of device
+def generate_devices(type='random', num_devs=4, model='random'):
+    dictionary = src.Reader.Reader().get_dictionary()
+    devices = []
+
+    if type == 'random':
+        for i in range(num_devs):
+            devices.append(dictionary.get_device(dID=i))
+    elif type == 'mix':
+        for i in range(num_devs):
+            if i % 4 == 0:
+                devices.append(dictionary.get_device(dtype='washer', dID=i))
+            elif i % 4 == 1:
+                devices.append(dictionary.get_device(dtype='dryer', dID=i))
+            elif i % 4 == 2:
+                devices.append(dictionary.get_device(dtype='oven', dID=i))
+            elif i % 4 == 3:
+                devices.append(dictionary.get_device(dtype='dishwasher', dID=i))
+    else:
+        for i in range(num_devs):
+            devices.append(dictionary.get_device(dtype=type, device_name=model, dID=i))
+
+    return devices
+
+def generate_rule(device):
+    sp = {
+        'washer'     : 'wash',
+        'dryer'      : 'dry',
+        'oven'       : 'bake',
+        'dishwasher': 'dish_wash'  # might change this one later
+    }[device.dtype]
+
+    predicate = 'E'# random.choice(['L', 'E', 'G']) # <=, ==, >=
+    prefix = random.choice(['before'])#, 'after'])  # todo: confirm at and within work properly 9_18_2017
+    time1 = -1
+    # todo: refine these to fit full possible range && add 'at' and 'within' 9_18_2017
+    if prefix == 'after':
+        time1 = random.randint(0, params.horizon-device.duration-1)
+    elif prefix == 'before':
+        time1 = random.randint(device.duration+1, params.horizon-1)
+    else:
+        print('Need to setup \'within\'/\'at\' inside generate_rule in Controller.py before using')
+        exit(-1)
+    # todo: figure out this location mess, right now all devices coincidentally are their loc 9_18_2017
+    return R.Rule(
+        loc=device.device_name,
+        sp=sp,
+        predicate=predicate,
+        prefix=prefix,
+        time1=time1,
+        horizon=params.horizon
+    )
+
+def run_experiment(timeout, devices, rules):
+    model = params.model
+    model.parameters.timelimit.set(timeout)
+    horizon = params.horizon
+
+    vars = []
+    for i in range(len(devices)):
+        devices[i].add_variables()
+        vars.append(devices[i].add_constraints(rules[i])[0])
+
+    model.variables.add(
+        names=['s_' + str(t) for t in range(horizon)],
+        types=[model.variables.type.continuous] * horizon,
+        lb=[0.0] * horizon
+        # obj=params.price_schema
+    )
+
+    for t in range(len(vars[0])):
+        indices = ['s_' + str(t)]
+        values = [-1.0]
+        for k in range(len(vars)):
+            indices.append(vars[k][t])
+            values.append(1000.0)
+
+        model.linear_constraints.add(
+            lin_expr=[
+                cplex.SparsePair(
+                    ind=indices,
+                    val=values
+                )],
+            senses=['E'],
+            rhs=[0.0]
+        )
+
+    model.parameters.solutiontarget = 2
+    # model.objective.set_quadratic_coefficients(quad_cons)
     model.objective.set_sense(model.objective.sense.minimize)
+    print('num variables: ', model.variables.get_num())
+    quad = []
+    for k in range(model.variables.get_num() - horizon):
+        quad.append([[k], [0.0]])
+    # adding quadratic objective
+    price = params.price_schema
+    for t in range(horizon):
+        quad.append([[len(quad)], [price[t]]])  # [1.0]])
+    print(quad)
+    model.objective.set_quadratic(quad)
+    model.write('problem.lp')
+    print('lin ', model.objective.get_linear())
+    print('quad', model.objective.get_quadratic())
+
     model.solve()
-    try:
-        solution = model.solution
-        print("Solution status: ", solution.get_status())
-        print("Objective value: ", solution.get_objective_value())
 
-        for j in range(len(variables[0])):
-            print(variables[0][j], end='\t')
-        print()
-        for j in range(len(variables[0])):
-            print(abs(solution.get_values(variables[0][j])), end='\t\t\t')
-        print()
-        print()
+    solution = model.solution
 
-        for i in range(1, len(variables)):
-            for j in range(len(variables[i])):
-                print(variables[i][j][0], end='\t\t\t')
-            print()
-            for j in range(len(variables[i])):
-                print('[', abs(solution.get_values(variables[i][j][0])), ',', variables[i][j][1], ']', end='\t\t')
-            print()
-            print()
-    except CplexError as exc:
-        print(exc)
+    print("Solution status: ", solution.get_status())
+    print("Objective value: ", solution.get_objective_value())
 
+    '''
+    scheduled = numpy.asarray([0] * horizon)  # this is a list of number of on devices for each timestep
+    for i in range(num_devs):
+        d_sched = numpy.asarray(devs[i].get_schedule(solution))
+        for j in range(horizon):
+            if d_sched[j] > 0.0001:
+                d_sched[j] = 1
+            else:
+                d_sched[j] = 0
+            scheduled[j] += d_sched[j]
+            if d_sched[j] == -1:
+                print('ERROR: negative number detected in device schedule.')
+    '''
+    schedule = ''
+    for i in range(len(devices)):
+        schedule += devices[i].get_info()
+        schedule += devices[i].get_phase_sched(solution)
+
+    power_sched = []
+    print('power usage:')
+    for t in range(len(vars[0])):
+        print(round(solution.get_values('s_' + str(t)), 2), end='\t')
+        power_sched.append(round(solution.get_values('s_' + str(t)), 2))
+    print()
+    print()
+    # print('sum:', sum(power_sched))
+
+    # TODO: find out if there is a way to return the current solution and different intervals 8_31_17
+    '''
+    s = ''
+    for i in range(horizon):
+        s += str(power_sched[i]) + '\t'
+        s += str(round(power_sched[i] * price[i], 2))
+
+        if i < horizon - 1:
+            s += '\t'
+        else:
+            s += '\n'
+    '''
+
+    return schedule

@@ -5,16 +5,16 @@ from cplex.exceptions import CplexError
 
 class Window:
 
-    def __init__(self, phases):
+    def __init__(self, phases, name):
         self.parameters = Parameters.Parameters()
         self.model = self.parameters.model
         self.phases = phases
+        self.name = name
+        self.var_names = [[]]
 
     def add_rule_constraints(self, rule):
-        goal = rule.goal
         time1 = rule.time1
-        time2 = rule.time2 + 1
-        self.var_names = [[]]
+        time2 = rule.time2
 
         print('time1', time1, 'time2', time2)
 
@@ -23,16 +23,16 @@ class Window:
 
         for i in range(len(self.phases)):
             duration += self.phases[i][0]
-
-        self.create_phase(self.phases[0][2]+str(1), time1, time2 - duration, self.phases[0][0], self.phases[0][1])
-        self.var_names[0].append(self.phases[0][2]+str(1))
+        print('duration', duration)
+        self.create_phase(self.phases[0][2], time1, time2 - duration, self.phases[0][0], self.phases[0][1])
+        self.var_names[0].append(self.phases[0][2])
 
         for i in range(1, len(self.phases)):
             duration -= self.phases[i-1][0]
             prev_duration += self.phases[i-1][0]
-            self.create_phase(self.phases[i][2]+str(1), time1 + prev_duration, time2 - duration, self.phases[i][0], self.phases[i][1])
-            self.var_names[0].append(self.phases[i][2] + str(1))
-            self.connect_phases(self.phases[i-1][2]+ str(1), self.phases[i][2]+ str(1), self.phases[i][0])
+            self.create_phase(self.phases[i][2], time1 + prev_duration, time2 - duration, self.phases[i][0], self.phases[i][1])
+            self.var_names[0].append(self.phases[i][2])
+            self.connect_phases(self.phases[i-1][2], self.phases[i][2], self.phases[i][0])
 
         return self.var_names
 
@@ -45,10 +45,11 @@ class Window:
 
         p_array = [None] * (f_time - s_time)
         p_array[0] = price
+        print('\tst_var:',st_var, '\ts_time:', s_time, '\tf_time:', f_time)
         for i in range(s_time, f_time):
             price += price_schema[i]
             price -= price_schema[i-1 - duration]  # should this have -1?
-            p_array[i - s_time] = price * kWh
+            p_array[i - s_time] = price * kWh * 100
 
         # add start time variable
         self.model.variables.add(
@@ -59,12 +60,15 @@ class Window:
         # add variables for first phase
         self.model.variables.add(
             names=[st_var + '_' + str(k) for k in range(s_time, f_time)],
-            types=[self.model.variables.type.integer] * (f_time - s_time),
-            obj=p_array
+            types=[self.model.variables.type.binary] * (f_time - s_time),
+            # obj=p_array
         )
+        # print('s_time', s_time)
+        # print('f_time', f_time)
+        # print('p_array', p_array)
         self.var_names.append([])
         for k in range(s_time, f_time):
-            self.var_names[len(self.var_names)-1].append((st_var + '_' + str(k), kWh))
+            self.var_names[len(self.var_names)-1].append((st_var + '_' + str(k), k, kWh))
 
         self.model.linear_constraints.add(
             lin_expr=[
@@ -72,8 +76,8 @@ class Window:
                     ind=[st_var + '_' + str(k) for k in range(s_time, f_time)],
                     val=[1.0] * (f_time - s_time)
                 )],
-            rhs=[1.0],
-            senses=['E']
+            senses=['E'],
+            rhs=[1.0]
         )
 
         # add constraint to set start time 1
@@ -81,10 +85,23 @@ class Window:
             self.model.indicator_constraints.add(
                 indvar=st_var + '_' + str(k),
                 complemented=0,
-                rhs=k,
+                lin_expr=cplex.SparsePair(ind=[st_var], val=[1.0]),
                 sense='E',
-                lin_expr=cplex.SparsePair(ind=[st_var], val=[1.0])
+                rhs=k
             )
+
+        for k in range(s_time, f_time):
+            for j in range(k, k+duration):
+                self.model.indicator_constraints.add(
+                    indvar=st_var + '_' + str(k),
+                    complemented=0,
+                    lin_expr=cplex.SparsePair(
+                        ind=[self.name + '_' + str(j)],
+                        val=[1.0]
+                    ),
+                    sense='E',
+                    rhs=kWh
+                )
 
     def connect_phases(self, st_var1, st_var2, duration):
         # add constraint making start time 2 > start time 1 + duration1

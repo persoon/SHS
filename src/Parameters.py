@@ -7,7 +7,7 @@ import src.RuleParser as rp
 
 
 class Parameters:
-    horizon = 1440
+    horizon = 24
 
     old_ps = [
         0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198,
@@ -18,7 +18,7 @@ class Parameters:
         0.198, 0.198
     ]
 
-
+    '''
     old_ps = [
         0.198, 0.849, 0.849, 0.198, 0.849, 0.198, 0.849, 0.198,
         0.225, 0.225, 0.225, 0.225,
@@ -27,7 +27,7 @@ class Parameters:
         0.225, 0.225, 0.849, 0.225,
         0.198, 0.198
     ]
-
+    '''
 
     price_schema = []
 
@@ -43,6 +43,7 @@ class Parameters:
         self.__dict__ = self.__we_are_one
         rule_parser = rp.RuleParser()
         self.rules, file_horizon = rule_parser.parse_rules('resources/input/rules.txt')
+        self.rules[0].to_string()
         # Converts the rules and price schema to the horizon set in parameters
         self.scale_factor = int(self.horizon / file_horizon)
         self.convert_price_schema()
@@ -59,3 +60,6 @@ class Parameters:
             for p in range(0, self.scale_factor):
                 price_schema.append(self.old_ps[k])
         self.price_schema = price_schema
+
+    def reset_solver(self):
+        self.model = cplex.Cplex()

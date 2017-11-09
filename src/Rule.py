@@ -16,9 +16,11 @@
 # TODO: add location
 
 class Rule:
-    def __init__(self, active, sp, predicate,
-                 goal, prefix, time1, time2, horizon):
+    def __init__(self, loc, sp, predicate,
+                 prefix, horizon, active=1, goal=None, time1=-1, time2=-1, r_type=None):
         self.active = active
+        self.r_type = r_type
+        self.location = loc
         self.sp = sp
         self.predicate = predicate
         self.goal = goal
@@ -46,12 +48,8 @@ class Rule:
             raise Exception('R1: not a valid time prefix')
 
     def to_string(self):
-        print(
-            self.active, '\t',
-            self.sp, '\t',
-            self.predicate, '\t',
-            self.goal, '\t',
-            self.prefix, '\t',
-            self.time1, '\t',
-            self.time2
-        )
+        return str(self.active) + ' ' +\
+                (str(self.r_type) + '\t') if self.r_type is not None else '' +\
+                self.location + '\t' + self.sp + '\t' + self.predicate + '\t' +\
+                str(self.goal) + '\t' + str(self.prefix) + '\t' +\
+                str(self.time1) + '\t' + str(self.time2)

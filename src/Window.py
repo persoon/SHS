@@ -75,7 +75,8 @@ class Window:
                 cplex.SparsePair(
                     ind=[st_var + '_' + str(k) for k in range(s_time, f_time)],
                     val=[1.0] * (f_time - s_time)
-                )],
+                )
+            ],
             senses=['E'],
             rhs=[1.0]
         )

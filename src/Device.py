@@ -1,16 +1,26 @@
-import src.Window
+import src.ActionDuration
 import src.Parameters
 import src.Utilities as util
 from cplex.exceptions import CplexError
 
+# All that a device should store is:
+#   device_name, mode_name, mode_type, dID,
+#   mode_type defines what other information must be found in a device:
+#   if mode_type is...
+#       'action_duration' then:
+#           phases = {(duration1, kWh1), (dur2, kWh2), (dur3, kWh3), ... }
+#       'action' then:
+#           kWh --- TODO: going to have to do something for state properties and their change over time
 
 class Device:
-    def __init__(self, device, dtype, device_name, mode_name, dID):
+    def __init__(self, device, mode_type, device_name, mode_name, dID, device_type='unspecified'):
         self.device_name = device_name
         self.mode_name = mode_name
-        self.dtype = dtype
+        self.mode_type = mode_type
+        self.device_type = device_type
         self.params = src.Parameters.Parameters()
         self.device = device
+        self.sp = device['properties']
         # self.name = str(dID)+'_'+device['name']  # puts the dID in front of each name so there is a unique ID
         self.name = 'd' + str(dID)
         self.mode = device['modes'][mode_name]
@@ -31,7 +41,7 @@ class Device:
             self.duration += self.mode[i]['duration']
 
     def to_string(self):
-        return 'name: ' + self.name + '\tdevice name: ' + self.device_name + '\tmode_name: ' + str(self.mode_name) + '\tduration: ' + str(self.duration)
+        return 'dID: ' + self.name + '\tdevice: ' + self.device_name + '\ttype: ' + self.device_type + '\n\tmode: ' + str(self.mode_name) + '\ttype: ' + '\ttotal duration: ' + str(self.duration)
 
 
     def add_variables(self):
@@ -57,7 +67,7 @@ class Device:
         for k in range(horizon):
             self.dvars.append(self.name + '_' + str(k))
 
-        self.window = src.Window.Window(phases=self.phases, name=self.name)
+        self.window = src.ActionDuration.ActionDuration(phases=self.phases, name=self.name)
 
         print(self.phases)
 
@@ -66,6 +76,10 @@ class Device:
         self.variables.insert(0, self.dvars)
         return self.variables
 
+
+
+
+''' PRINTING STUFF <-- Look at me later to add this to other place
     def print_variables(self, solution):
         try:
             # device power schedule
@@ -148,11 +162,8 @@ class Device:
                     else:
                         output += '- '
                         j += 1
-        '''
-        while j != self.params.horizon:
-            output += '- '
-            j += 1
-        '''
+
         output += '\n'
 
         return output
+'''

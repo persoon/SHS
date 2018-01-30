@@ -8,26 +8,12 @@ import numpy
 import time
 import random
 
-# TODO --- what needs to happen: --------------------------------------------------------
-# read paper about HVAC
-# clean stuff up, comment, go through some TODO's
-
 params = src.Parameters.Parameters()
-
 
 def execute():
     dictionary = src.Reader.Reader().get_dictionary()
-
-    '''
-    text = ''
-    text += run_experiment(num_devs=20, timeout=10, dictionary=dictionary)
-    src.Parameters.Parameters().reset_solver()
-    text += run_experiment(num_devs=20, timeout=60, dictionary=dictionary)
-    src.Parameters.Parameters().reset_solver()
-    text += run_experiment(num_devs=20, timeout=300, dictionary=dictionary)
-    '''
     devices = generate_devices(type='washer', num_devs=1, model="GE_WSM2420D3WW")
-    # devices = generate_devices(type='mix')
+
     rules = []
     for i in range(len(devices)):
         print(devices[i].to_string())
@@ -71,8 +57,8 @@ def generate_devices(type='random', num_devs=4, model='random'):
     else:
         for i in range(num_devs):
             devices.append(dictionary.get_device(dtype=type, device_name=model, dID=i))
-
     return devices
+
 
 def generate_rule(device):
     sp = {

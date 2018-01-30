@@ -1,2 +1,2 @@
 24
-1	1	d:GE_WSM2420D3WW	wash	regular	-	before	24
+1	1	r:room	air_temp	leq	65	within	7	14

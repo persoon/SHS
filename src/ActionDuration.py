@@ -1,22 +1,23 @@
-import src.Parameters as Parameters
 import cplex
 from cplex.exceptions import CplexError
 
 
-class Window:
+class ActionDuration:
 
-    def __init__(self, phases, name):
-        self.parameters = Parameters.Parameters()
-        self.model = self.parameters.model
+    def __init__(self, model, params, name, phases):
+        self.params = params
+        self.model = model
         self.phases = phases
         self.name = name
         self.var_names = [[]]
 
+    # TODO: create 'setup_actions()' which creates all of the phases and rules for when each phase can be run 1/26/2018
+    # TODO: (cont'd) 'add_rule_constraints()' sets the req. that p_1 doesnt start before time1 & p_n ends before time2
     def add_rule_constraints(self, rule):
         time1 = rule.time1
         time2 = rule.time2
 
-        print('time1', time1, 'time2', time2)
+        #print('time1', time1, 'time2', time2)
 
         duration = 0
         prev_duration = 0
@@ -37,7 +38,7 @@ class Window:
         return self.var_names
 
     def create_phase(self, st_var, s_time, f_time, duration, kWh):
-        price_schema = self.parameters.price_schema
+        price_schema = self.params.price_schema
 
         price = 0
         for i in range(s_time, s_time + duration):

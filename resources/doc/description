@@ -1,0 +1,9 @@
+Main.py ########################
+Starts program.
+- Currently just starts Controller.py
+
+Controller.py ##################
+Connects subparts of program together
+- Generates devices
+- Generates rules
+- Starts solver

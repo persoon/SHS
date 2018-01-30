@@ -4,16 +4,13 @@
 # Groups rule information in an object for use in the solver
 # Parameters:
 #   active      - True if the rule is an active rule, False if passive (a rule that is always on)
+#   loc         - Location of the rule
 #   sp          - Sensor property the rule affects
 #   predicate   - One of: {<, <=, =, >=, >} If the value needs to be larger, smaller, or the same as 'goal'
 #   goal        - The goal state
 #   prefix      - {'before', 'after', 'at', 'within'}
 #   time1       - Time step the rule applies to
 #   time2       - Secondary time step used for 'within' rules
-
-# TODO: add function for switching granularities
-# TODO: explain how rules work
-# TODO: add location
 
 class Rule:
     def __init__(self, loc, sp, predicate,
@@ -22,7 +19,7 @@ class Rule:
         self.r_type = r_type
         self.location = loc
         self.sp = sp
-        self.predicate = predicate
+        self.predicate = predicate # <=, =, >=
         self.goal = goal
         if not active:  # passive rules don't have a time prefix (if they did it would be 'always')
             self.prefix = None

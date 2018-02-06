@@ -7,23 +7,48 @@ from cplex.exceptions import CplexError
 import numpy
 import time
 import random
+import src.Solver as Solver
 
 params = src.Parameters.Parameters()
 
+
 def execute():
     dictionary = src.Reader.Reader().get_dictionary()
-    devices = generate_devices(type='washer', num_devs=1, model="GE_WSM2420D3WW")
+    devices = [
+        dictionary.get_device(device_type='HVAC', mode_name='cool', dID=0),
+        dictionary.get_device(device_type='washer', device_name='GE_WSM2420D3WW', mode_name="regular_w", dID=1),
+        dictionary.get_device(device_type='dryer', device_name='GE_WSM2420D3WW', mode_name="regular_d", dID=2),
+        dictionary.get_device(device_type='oven', device_name='Kenmore_790', mode_name="bake", dID=3),
+        dictionary.get_device(device_type='dishwasher', device_name='Kenmore_665', mode_name="wash", dID=4)
+    ]
+    params = src.Parameters.Parameters()
+    params.devices = devices
+    solver = Solver.Solver(params=params)
+    solution = solver.solve()
 
+    '''
     rules = []
     for i in range(len(devices)):
         print(devices[i].to_string())
         rules.append(generate_rule(devices[i]))
         print(rules[i].to_string())
         print()
+    '''
+    print('-------------------------------------')
+    for d in range(len(devices)):
+        print(devices[d].name)
+        for p in range(len(devices[d].phases)):
+            print(devices[d].mode[p]['name'] + ':', end='\t')
+            for t in range(params.horizon):
+                print(int(solution.get_values('d'+str(d)+'_p'+str(p)+'_'+str(t))) ,end='\t')
+            print()
+        print('-------------------------------------')
 
-    f = open('resources/output/schedule.txt', 'w')
-    f.write(run_experiment(timeout=10, devices=devices, rules=rules))
-    f.close()
+
+    ''' TODO: Fix schedule printing with new Solver '''
+    #f = open('resources/output/schedule.txt', 'w')
+    #f.write(run_experiment(timeout=10, devices=devices, rules=rules))
+    #f.close()
 
 
 # generates devices

@@ -79,7 +79,7 @@ class Device:
 
 
 
-''' PRINTING STUFF <-- Look at me later to add this to other place
+    ''' PRINTING STUFF <-- Look at me later to add this to other place '''
     def print_variables(self, solution):
         try:
             # device power schedule
@@ -166,4 +166,3 @@ class Device:
         output += '\n'
 
         return output
-'''

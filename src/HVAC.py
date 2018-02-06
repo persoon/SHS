@@ -15,7 +15,11 @@ class HVAC:
         self.params = Parameters.Parameters()
         self.model = model
         self.rname = rname
-        self.devices = devices
+        self.devices = []
+        for d in devices:
+            if 'air_temp' in d.sp:
+                self.devices.append(d)
+        # self.devices = devices
         self.horizon = self.params.horizon
         self.htype = self.params.htype
         self.T_a = self.params.out_temp

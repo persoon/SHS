@@ -11,13 +11,12 @@ class ActionDuration:
         self.name = name
         self.var_names = [[]]
 
+
     # TODO: create 'setup_actions()' which creates all of the phases and rules for when each phase can be run 1/26/2018
     # TODO: (cont'd) 'add_rule_constraints()' sets the req. that p_1 doesnt start before time1 & p_n ends before time2
     def add_rule_constraints(self, rule):
         time1 = rule.time1
         time2 = rule.time2
-
-        #print('time1', time1, 'time2', time2)
 
         duration = 0
         prev_duration = 0
@@ -60,8 +59,8 @@ class ActionDuration:
 
         # add variables for first phase
         self.model.variables.add(
-            names=[st_var + '_' + str(k) for k in range(s_time, f_time)],
-            types=[self.model.variables.type.binary] * (f_time - s_time),
+            names=[st_var + '_' + str(k) for k in range(0, self.params.horizon)],
+            types=[self.model.variables.type.binary] * self.params.horizon,
             # obj=p_array
         )
         # print('s_time', s_time)

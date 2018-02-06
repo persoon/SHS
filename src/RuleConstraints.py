@@ -44,17 +44,23 @@ class RuleConstraints:
                     del mode_cons[i]
                     break
 
+        hrules = []
         for r in rrules:
             if r.sp == 'air_temp':
-                devices = []
+                hrules.append(r)
 
-                # find all active devices that affect air_temp
-                # for d in used: # for now, using the 2-lines below because hvac isn't in used list...
-                for i in range(len(mode_cons)):
-                    d = mode_cons[i][0]
-                    if 'air_temp' in d.sp:
-                        devices.append(d)
+        if len(hrules) > 0: # at least one hvac related rule
+            devices = []
+            # find all active devices that affect air_temp
+            # for d in used: # for now, using the 2-lines below because hvac isn't in used list...
+            for i in range(len(mode_cons)):
+                d = mode_cons[i][0]
+                if d.mode_type == 'HVAC':
+                    devices.append(d)
 
-                # Add HVAC model
-                hvac = src.HVAC.HVAC(model= self.model, rname=r.location, devices=devices)
+            devices.extend(used)
+            # TODO: initialized hvac in all applicable rooms 2/2/2018
+            hvac = src.HVAC.HVAC(model=self.model, rname='room', devices=devices)
+
+            for r in hrules:
                 hvac.add_active_rule(r)

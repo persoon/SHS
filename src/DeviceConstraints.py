@@ -24,7 +24,7 @@ class DeviceConstraints:
             dvars = self.add_device_vars(device=d)
             for h in range(self.horizon):
                 self.vars[h].append(dvars[h])
-
+        print('vars:', self.vars)
         for h in range(self.horizon):
             print(str(h), end=": ")
             for i in range(len(self.vars[h])):
@@ -42,8 +42,8 @@ class DeviceConstraints:
         mode = device.mode
 
         for i in range(len(mode)):
-            phases[i] = int(mode[i]['duration']), float(mode[i]['kWh']*(1440/24)), name + '_p' + str(i)
-            max_kWh = max(max_kWh, float(mode[i]['kWh'])*(1440/24))
+            phases[i] = int(mode[i]['duration']), float(mode[i]['kWh']), name + '_p' + str(i)
+            max_kWh = max(max_kWh, float(mode[i]['kWh']))
 
         # creating a variable for each timestep from 0 to horizon-1
         # this is our device schedule -- used later to aggregate power consumption per timestep

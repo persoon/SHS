@@ -4,7 +4,7 @@ import src.Rule as R
 import src.Reader
 import cplex
 from cplex.exceptions import CplexError
-import numpy
+#import numpy
 import time
 import random
 import src.Solver as Solver
@@ -15,11 +15,11 @@ params = src.Parameters.Parameters()
 def execute():
     dictionary = src.Reader.Reader().get_dictionary()
     devices = [
-        dictionary.get_device(device_type='HVAC', mode_name='cool', dID=0),
-        dictionary.get_device(device_type='washer', device_name='GE_WSM2420D3WW', mode_name="regular_w", dID=1),
-        dictionary.get_device(device_type='dryer', device_name='GE_WSM2420D3WW', mode_name="regular_d", dID=2),
-        dictionary.get_device(device_type='oven', device_name='Kenmore_790', mode_name="bake", dID=3),
-        dictionary.get_device(device_type='dishwasher', device_name='Kenmore_665', mode_name="wash", dID=4)
+        # dictionary.get_device(device_type='HVAC', mode_name='cool', dID=0),
+        dictionary.get_device(device_type='washer', device_name='GE_WSM2420D3WW', mode_name="regular_w", dID=0),
+        # dictionary.get_device(device_type='dryer', device_name='GE_WSM2420D3WW', mode_name="regular_d", dID=2),
+        # dictionary.get_device(device_type='oven', device_name='Kenmore_790', mode_name="bake", dID=3),
+        # dictionary.get_device(device_type='dishwasher', device_name='Kenmore_665', mode_name="wash", dID=4)
     ]
     params = src.Parameters.Parameters()
     params.devices = devices

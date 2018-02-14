@@ -31,6 +31,7 @@ class RuleConstraints:
                 dev = mode_cons[i][0]
                 name = dev.name
                 dname = dev.device_name
+                print(dname, r.location)
                 if dname == r.location:
                     # if device is used, add to list of used once so it can be added to state prop models later
                     if dev not in used:

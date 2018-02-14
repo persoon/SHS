@@ -10,8 +10,6 @@ import src.HVAC
 import src.DeviceConstraints as DCons
 import src.RuleConstraints as RCons
 import cplex
-
-
 import src.Parameters
 import src.Reader
 
@@ -83,7 +81,7 @@ class Solver:
         self.model.parameters.solutiontarget = 2
         # model.objective.set_quadratic_coefficients(quad_cons)
         self.model.objective.set_sense(self.model.objective.sense.minimize)
-        print('num variables: ', self.model.variables.get_num())
+        print('Number of Variables: ', self.model.variables.get_num())
         quad = []
         for k in range(self.model.variables.get_num() - self.horizon):
             quad.append([[k], [0.0]])
@@ -91,9 +89,8 @@ class Solver:
         price = params.price_schema
         for t in range(self.horizon):
             quad.append([[len(quad)], [1.0]]) # [price[t]]])
-        print(quad)
 
-        self.model.objective.set_quadratic(quad)
+        # self.model.objective.set_quadratic(quad)
         self.model.write('problem.lp')
 
     def solve(self):
@@ -110,15 +107,15 @@ class Solver:
                 print(round(solution.get_values(self.vars[t][d]), 2), end="\t")
             print()
 
-
+        '''
         print('================= Indoor Temperature ==================')
         for i in range(self.horizon):
-            print(round(solution.get_values('T_z' + str(i)), 2), end="\t")
+            print(round(solution.get_values('T_z' + str(i)), 1), end="  ")
         print()
-
+        '''
         print('++++++++++++++++++++++ Schedule ++++++++++++++++++++++')
         for t in range(self.horizon):
-            print(round(solution.get_values('s_' + str(t)), 2), end="\t")
+            print(" "+str(round(solution.get_values('s_' + str(t)), 1)),end="  ")
         print()
         print('++++++++++++++++++++++++++++++++++++++++++++++++++++++')
         print()

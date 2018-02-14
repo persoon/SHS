@@ -24,12 +24,6 @@ class DeviceConstraints:
             dvars = self.add_device_vars(device=d)
             for h in range(self.horizon):
                 self.vars[h].append(dvars[h])
-        print('vars:', self.vars)
-        for h in range(self.horizon):
-            print(str(h), end=": ")
-            for i in range(len(self.vars[h])):
-                print(self.vars[h][i], end=", ")
-            print()
 
     '''
     generates the variables for each device
@@ -68,7 +62,6 @@ class DeviceConstraints:
             self.mode_cons.append((device, action_model))
         else:
             self.mode_cons.append((device, src.ActionDuration.ActionDuration(model=self.model, params=self.params, name=name, phases=phases)))
-        print(phases)
         return dvars
 
 

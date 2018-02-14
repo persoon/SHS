@@ -1,8 +1,6 @@
 # 6_21_2017
 #
 # parameters used across multiple files in the program
-import cplex
-from cplex.exceptions import CplexError
 import src.RuleParser as rp
 
 
@@ -29,6 +27,13 @@ class Parameters:
         0.849, 0.849, 0.849, 0.849,
         0.225, 0.225, 0.225, 0.225,
         0.198, 0.198
+    ]
+
+    price_schema = [
+        40, 35, 30, 30, 28, 25,
+        25, 25, 22, 22, 20, 20,
+        16, 16, 12, 12, 10,  8,
+         8,  8,  6,  6,  6,  4
     ]
 
     '''

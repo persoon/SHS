@@ -36,8 +36,8 @@ class DeviceConstraints:
         mode = device.mode
 
         for i in range(len(mode)):
-            phases[i] = int(mode[i]['duration']), float(mode[i]['kWh']), name + '_p' + str(i)
-            max_kWh = max(max_kWh, float(mode[i]['kWh']))
+            phases[i] = int(mode[i]['duration']), float(mode[i]['kWh']) * 100, name + '_p' + str(i)
+            max_kWh = max(max_kWh, float(mode[i]['kWh']) * 100)
 
         # creating a variable for each timestep from 0 to horizon-1
         # this is our device schedule -- used later to aggregate power consumption per timestep

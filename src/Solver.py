@@ -35,7 +35,7 @@ class Solver:
             names=['s_' + str(t) for t in range(self.horizon)],
             types=[self.model.variables.type.continuous] * self.horizon,
             lb=[0.0] * self.horizon,
-            obj=[params.price_schema[t] for t in range(self.horizon)]
+            obj=params.price_schema
         )
 
         self.vars = dcons.vars
@@ -76,7 +76,6 @@ class Solver:
             senses=['E'],
             rhs=[0.0]
         )
-
 
         self.model.parameters.solutiontarget = 2
         # model.objective.set_quadratic_coefficients(quad_cons)
@@ -121,6 +120,13 @@ class Solver:
         print()
         print('objPrice: ', round(solution.get_values('objPrice')))
         print('objPower: ', round(solution.get_objective_value()) - round(solution.get_values('objPrice')))
+
+
+
+        for T in range(16, 23):
+            print('Solution d0_t'+str(T)+':', round(solution.get_values('d0_t'+str(T)), 2))
+
+
         return solution
 '''
 dictionary = src.Reader.Reader().get_dictionary()

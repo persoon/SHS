@@ -20,6 +20,7 @@ class Parameters:
     # solar:
     dni = [0, 0, 0, 0, 0, 0, 7, 218, 260, 467, 448, 103, 83, 53, 1, 380, 501, 277, 113, 0, 0, 0, 0, 0]
 
+    # real time-of-use price schema from California
     price_schema = [
         0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198,
         0.225, 0.225, 0.225, 0.225,
@@ -29,6 +30,7 @@ class Parameters:
         0.198, 0.198
     ]
 
+    # goofy price schema which monotonically decreases so I can see that things are working
     price_schema = [
         40, 35, 30, 30, 28, 25,
         25, 25, 22, 22, 20, 20,

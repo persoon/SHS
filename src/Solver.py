@@ -23,7 +23,8 @@ class Solver:
 
         self.model = src.Model.Model().model
         dcons = DCons.DeviceConstraints(model=self.model, params=self.params, devices=self.devices)
-        RCons.RuleConstraints(model=self.model, mode_cons=dcons.mode_cons, rules=self.rules)
+        rcons = RCons.RuleConstraints(model=self.model, mode_cons=dcons.mode_cons, rules=self.rules)
+        self.rule_pref = rcons.rule_pref
 
         self.model.variables.add(
             names=['objPrice'],

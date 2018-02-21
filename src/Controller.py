@@ -35,9 +35,10 @@ def execute():
         print()
     '''
 
+    rule_pref = solver.rule_pref
     # prints out all of the best solutions (with increasing discomfort level)
-    for T in range(17, params.horizon):
-        print('Solution d0_t' + str(T) + ':', round(solution.get_values('d0_t' + str(T)), 2))
+    for s in range(len(rule_pref)):
+        print('Solution ' + str(rule_pref[s][0]) + '_t' + str(rule_pref[s][2]) + ':', round(solution.get_values('d0_t' + str(rule_pref[s][2])), 2))
 
     # solution if normal rule is used
     print('-------------------------------------')
@@ -50,13 +51,13 @@ def execute():
             print()
         print('-------------------------------------')
 
-
-    for s in range(17, params.horizon):
-        print('T =', s)
-        for p in range(len(devices[0].phases)):
-            print(devices[0].mode[p]['name'] + ':', end='\t')
+    for s in range(len(rule_pref)):
+        print('T =', rule_pref[s][2])
+        for p in range(rule_pref[s][1]):
+            dname = rule_pref[s][0]
+            print(devices[int(rule_pref[s][0].replace('d', ''))].mode[p]['name'] + ':', end='\t')
             for t in range(params.horizon):
-                print(int(solution.get_values('d0_t'+str(s)+'_p'+str(p)+'_'+str(t))), end='\t')
+                print(int(solution.get_values(dname+'_t'+str(rule_pref[s][2])+'_p'+str(p)+'_'+str(t))), end='\t')
             print()
         print('-------------------------------------')
 

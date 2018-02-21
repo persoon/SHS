@@ -11,75 +11,67 @@ class ActionDuration:
         self.name = name
         self.var_names = [[]]
 
+    # creates a rule constraint on new variables (so you can test multiple possibilities)
     def add_rule_pref(self, rule):
         horizon = self.params.horizon
         duration = 0
-
+        prev_duration = 0
         max_kWh = 0
+
         for i in range(len(self.phases)):
             max_kWh = max(max_kWh, float(self.phases[i][1]))
-
 
         for i in range(len(self.phases)):
             duration += self.phases[i][0]
 
-        DURATION = duration
+        temp = []
+        self.name = self.name.split('_')[0] + '_t' + str(rule.time2)
+        for j in range(0, len(self.phases)):
+            temp2 = (self.phases[j][0], self.phases[j][1], self.name + '_p' + str(j))
+            temp.append(temp2)
+        self.phases = temp
+        print(self.name)
 
-        for T in range(rule.time2+1, horizon):
-            duration = DURATION
-            prev_duration = 0
+        self.model.variables.add(
+            names=[self.name + '_' + str(k) for k in range(horizon)],
+            types=[self.model.variables.type.continuous] * horizon,
+            lb=[0.0] * horizon,
+            ub=[max_kWh * 1.05] * horizon
+            # obj=params.price_schema
+        )
 
-            temp = []
-            self.name = self.name.split('_')[0] + '_t' + str(T)
-            for j in range(0, len(self.phases)):
-                temp2 = (self.phases[j][0], self.phases[j][1], self.name + '_p' + str(j))
-                temp.append(temp2)
-            self.phases = temp
-            print(self.name)
+        # the cost of schedule T = X
+        self.model.variables.add(
+            names=[self.name],
+            types=[self.model.variables.type.continuous],
+            lb=[0.0],
+            obj=[1.0]
+        )
 
-            self.model.variables.add(
-                names=[self.name + '_' + str(k) for k in range(horizon)],
-                types=[self.model.variables.type.continuous] * horizon,
-                lb=[0.0] * horizon,
-                ub=[max_kWh * 1.05] * horizon
-                # obj=params.price_schema
-            )
+        _ind = [self.name]
+        _val = [-1.0]
 
-            # the cost of schedule T = X
-            self.model.variables.add(
-                names=[self.name],
-                types=[self.model.variables.type.continuous],
-                lb=[0.0],
-                obj=[1.0]
-            )
+        _ind.extend([self.name + '_' + str(k) for k in range(horizon)])
+        _val.extend(self.params.price_schema)
 
-            _ind = [self.name]
-            _val = [-1.0]
+        self.model.linear_constraints.add(
+            lin_expr=[
+                cplex.SparsePair(
+                    ind=_ind,
+                    val=_val
+                )
+            ],
+            senses=['E'],
+            rhs=[1.0]
+        )
 
-            _ind.extend([self.name + '_' + str(k) for k in range(horizon)])
-            _val.extend(self.params.price_schema)
-
-            self.model.linear_constraints.add(
-                lin_expr=[
-                    cplex.SparsePair(
-                        ind=_ind,
-                        val=_val
-                    )
-                ],
-                senses=['E'],
-                rhs=[1.0]
-            )
-
-            # creating and connecting each action so each one happens after another
-            self.create_phase(self.phases[0][2], rule.time1, T - duration, self.phases[0][0], self.phases[0][1])
-            for j in range(1, len(self.phases)):
-                duration -= self.phases[j-1][0]
-                prev_duration += self.phases[j-1][0]
-                self.create_phase(self.phases[j][2], rule.time1 + prev_duration, T - duration, self.phases[j][0], self.phases[j][1])
-                self.connect_phases(self.phases[j-1][2], self.phases[j][2], self.phases[j][0])
-
-
-
+        # creating and connecting each action so each one happens after another
+        self.create_phase(self.phases[0][2], rule.time1, rule.time2 - duration, self.phases[0][0], self.phases[0][1])
+        for j in range(1, len(self.phases)):
+            duration -= self.phases[j-1][0]
+            prev_duration += self.phases[j-1][0]
+            self.create_phase(self.phases[j][2], rule.time1 + prev_duration, rule.time2 - duration, self.phases[j][0], self.phases[j][1])
+            self.connect_phases(self.phases[j-1][2], self.phases[j][2], self.phases[j][0])
 
     # TODO: create 'setup_actions()' which creates all of the phases and rules for when each phase can be run 1/26/2018
     # TODO: (cont'd) 'add_rule_constraints()' sets the req. that p_1 doesnt start before time1 & p_n ends before time2

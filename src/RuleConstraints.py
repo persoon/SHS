@@ -10,7 +10,7 @@ class RuleConstraints:
         self.model = model
         self.rules = rules
         self.mode_cons = mode_cons
-
+        self.rule_pref = []
         # all rules are located in a room or a device
         # splits rules into the two groups and removes identifier
         # TODO: make the removal of identifier happen in Rule.py and have r_type (or loc_type) identify
@@ -29,16 +29,26 @@ class RuleConstraints:
         for r in drules:
             for i in range(len(mode_cons)):
                 dev = mode_cons[i][0]
-                name = dev.name
                 dname = dev.device_name
-                print(dname, r.location)
                 if dname == r.location:
+                    name = dev.name
                     # if device is used, add to list of used once so it can be added to state prop models later
                     if dev not in used:
                         used.append(dev)
 
+                    # normal rule constraint
                     mode_cons[i][1].add_rule_constraints(r)
+
+                    # Nando ---- look at this ################################################
+                    r.time2 += 1  # because rules.txt has 'wash before 16', this tests 'before 17'
                     mode_cons[i][1].add_rule_pref(r)
+                    self.rule_pref.append((name, len(dev.phases), r.time2))
+                    # ------------------------------------------------------------------------
+                    r.time2 += 3  # because r.time2 = 17, this tests 'before 20'
+                    mode_cons[i][1].add_rule_pref(r)
+                    self.rule_pref.append((name, len(dev.phases), r.time2))
+                    ##########################################################################
+
                     print(name + " -------------------------")
                     print(r.to_string())
                     print(dname, dev.mode_name)

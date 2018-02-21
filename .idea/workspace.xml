@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8221c1c0-ccf8-414e-9ac2-9d6b93116783" name="Default" comment="">
+    <list default="true" id="8221c1c0-ccf8-414e-9ac2-9d6b93116783" name="Default" comment="added pdf diagram of connected files">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/doc/SHS-new.pdf" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/preferences/Preference.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ActionDuration.py" afterPath="$PROJECT_DIR$/src/ActionDuration.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Controller.py" afterPath="$PROJECT_DIR$/src/Controller.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Parameters.py" afterPath="$PROJECT_DIR$/src/Parameters.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/RuleConstraints.py" afterPath="$PROJECT_DIR$/src/RuleConstraints.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Solver.py" afterPath="$PROJECT_DIR$/src/Solver.py" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -47,21 +44,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rules.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/input/rules.txt">
+      <file leaf-file-name="DataParser.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/parsers/DataParser.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22">
-              <caret line="1" column="58" lean-forward="false" selection-start-line="1" selection-start-column="58" selection-end-line="1" selection-end-column="58" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="problem.lp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/problem.lp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8030">
-              <caret line="365" column="6" lean-forward="false" selection-start-line="365" selection-start-column="6" selection-end-line="365" selection-end-column="6" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -79,11 +66,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RuleConstraints.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RuleConstraints.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/RuleConstraints.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="352">
               <caret line="49" column="94" lean-forward="true" selection-start-line="49" selection-start-column="94" selection-end-line="49" selection-end-column="94" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="description" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/doc/description">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="176">
+              <caret line="8" column="15" lean-forward="true" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="readme" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/doc/readme">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -326,12 +333,13 @@
     <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\wklue\Desktop\SHS\resources\doc" />
+      <recent name="C:\Users\wklue\PycharmProjects\SHS\resources\examples" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\wklue\Desktop\SHS\resources\output" />
       <recent name="C:\Users\wklue\PycharmProjects\SHS\src" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\wklue\PycharmProjects\SHS\resources\examples" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -717,12 +725,18 @@
       <option name="project" value="LOCAL" />
       <updated>1519187011264</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Made it so you can add individual 'preference' rules&#10;&#10;**TODO: 'after' rule">
+      <created>1519237065504</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1519237065504</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="2576" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Debug Logs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -732,7 +746,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3615222" sideWeight="0.49570313" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Execute Anonymous" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08945312" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08945312" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -782,7 +796,8 @@
     <MESSAGE value="Restructured entire project&#10; - made code much more &quot;loosely coupled&quot; so it is easier to pivot&#10; - combined hvac with other code&#10; - created Actions w/o duration&#10; &#10;TODO still: clean things up and remove dead code." />
     <MESSAGE value="First working version that generates a schedule for each value 'T' for one device and one rule of form: &quot;laundry_w before T&quot;&#10;Still a lot of bugs but almost there." />
     <MESSAGE value="* Fixed bugs&#10;* Prints out each schedule nicely&#10;&#10;**TODO: 'after' rule&#10;**TODO: choose to 'add' a preference to the list" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Fixed bugs&#10;* Prints out each schedule nicely&#10;&#10;**TODO: 'after' rule&#10;**TODO: choose to 'add' a preference to the list" />
+    <MESSAGE value="Made it so you can add individual 'preference' rules&#10;&#10;**TODO: 'after' rule" />
+    <option name="LAST_COMMIT_MESSAGE" value="Made it so you can add individual 'preference' rules&#10;&#10;**TODO: 'after' rule" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -797,20 +812,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/Main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files/IBM/ILOG/CPLEX_Studio1271/cplex/python/3.5/x64_win64/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="21" lean-forward="false" selection-start-line="0" selection-start-column="21" selection-end-line="0" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -926,20 +927,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/DeviceGen.py" />
-    <entry file="file://$PROJECT_DIR$/resources/doc/readme">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/doc/description">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="8" column="15" lean-forward="false" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Solver0.py" />
     <entry file="file://$PROJECT_DIR$/src/Utilities.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -1061,17 +1048,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Solver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="17" column="12" lean-forward="true" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="12" />
-          <folding>
-            <element signature="e#164#180#0" expanded="true" />
-            <marker date="1519236603416" expanded="true" signature="367:4642" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Controller.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="203">
@@ -1110,6 +1086,49 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="352">
           <caret line="49" column="94" lean-forward="true" selection-start-line="49" selection-start-column="94" selection-end-line="49" selection-end-column="94" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/doc/readme">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/doc/description">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="8" column="15" lean-forward="true" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="137">
+          <caret line="17" column="12" lean-forward="true" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="12" />
+          <folding>
+            <element signature="e#164#180#0" expanded="true" />
+            <marker date="1519236603416" expanded="true" signature="367:4642" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/preferences/Preference.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parsers/DataParser.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>

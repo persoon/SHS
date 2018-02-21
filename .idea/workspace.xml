@@ -2,38 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8221c1c0-ccf8-414e-9ac2-9d6b93116783" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_Dishwasher.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_Oven.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_kitchen_outlets1.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_kitchen_outlets2.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_kitchen_outlets3.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_lighting1.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_lighting2.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_lighting3.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_microwave.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_washer_dryer.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H1_washing_machine.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H3_dishwasher.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H3_kitchen_outlet.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H3_microwave.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H3_washer_dryer.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H4_dishwasher.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H4_furance.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H4_kitchen_outlets1.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H4_kitchen_outlets2.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H4_stove.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/input/data/H4_washer_dryer.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/parsers/DataParser.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/preferences/Preference.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/DeviceGen.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/StateModelGen.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/SHS.iml" afterPath="$PROJECT_DIR$/.idea/SHS.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ActionDuration.py" afterPath="$PROJECT_DIR$/src/ActionDuration.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Controller.py" afterPath="$PROJECT_DIR$/src/Controller.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Device.py" afterPath="$PROJECT_DIR$/src/Device.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/DeviceConstraints.py" afterPath="$PROJECT_DIR$/src/DeviceConstraints.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Parameters.py" afterPath="$PROJECT_DIR$/src/Parameters.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/RuleConstraints.py" afterPath="$PROJECT_DIR$/src/RuleConstraints.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Solver.py" afterPath="$PROJECT_DIR$/src/Solver.py" />
     </list>
@@ -47,7 +19,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/SHS$json.coverage" NAME="json Coverage Results" MODIFIED="1501694582177" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/SHS$Main.coverage" NAME="Main Coverage Results" MODIFIED="1518817316108" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/SHS$Main.coverage" NAME="Main Coverage Results" MODIFIED="1519186851340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/SHS$current.coverage" NAME="current Coverage Results" MODIFIED="1513189844587" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/SHS$Solver_Test.coverage" NAME="Solver Test Coverage Results" MODIFIED="1517872117696" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/SHS$test.coverage" NAME="test Coverage Results" MODIFIED="1503616289967" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:/Program Files/IBM/ILOG/CPLEX_Studio1271/cplex/examples/src/python" />
@@ -61,180 +33,105 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5077633">
-      <split-first>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="Solver.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/Solver.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="2618">
-                  <caret line="126" column="89" lean-forward="false" selection-start-line="126" selection-start-column="89" selection-end-line="126" selection-end-column="89" />
-                  <folding>
-                    <element signature="e#164#180#0" expanded="true" />
-                    <marker date="1518817262269" expanded="true" signature="367:4721" ph="..." />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="rules.txt" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/resources/input/rules.txt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="22">
-                  <caret line="1" column="58" lean-forward="false" selection-start-line="1" selection-start-column="58" selection-end-line="1" selection-end-column="58" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="problem.lp" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/problem.lp">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1166">
-                  <caret line="53" column="35" lean-forward="false" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="35" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="DeviceConstraints.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/DeviceConstraints.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="378">
-                  <caret line="39" column="62" lean-forward="false" selection-start-line="39" selection-start-column="62" selection-end-line="39" selection-end-column="62" />
-                  <folding>
-                    <element signature="e#307#323#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="RuleConstraints.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/RuleConstraints.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="880">
-                  <caret line="40" column="0" lean-forward="false" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="ActionDuration.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/ActionDuration.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1496">
-                  <caret line="69" column="74" lean-forward="false" selection-start-line="69" selection-start-column="74" selection-end-line="69" selection-end-column="74" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="Rule.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/Rule.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="462">
-                  <caret line="21" column="46" lean-forward="false" selection-start-line="21" selection-start-column="46" selection-end-line="21" selection-end-column="46" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Controller.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/Controller.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="2354">
-                  <caret line="116" column="0" lean-forward="false" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#21#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Action.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/Action.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="506">
-                  <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="dictionary.json" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/resources/input/dictionary.json">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="198">
-                  <caret line="9" column="25" lean-forward="false" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="RuleParser.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/RuleParser.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="286">
-                  <caret line="15" column="44" lean-forward="false" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
-                  <folding>
-                    <element signature="e#248#258#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Device.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/Device.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="616">
-                  <caret line="52" column="0" lean-forward="true" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#25#0" expanded="true" />
-                    <marker date="1518816845528" expanded="true" signature="1954:3763" ph="..." />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Dictionary.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/Dictionary.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="462">
-                  <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="HVAC.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/HVAC.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="220">
-                  <caret line="12" column="11" lean-forward="false" selection-start-line="12" selection-start-column="11" selection-end-line="12" selection-end-column="11" />
-                  <folding>
-                    <element signature="e#0#35#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Parameters.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/Parameters.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="550">
-                  <caret line="25" column="21" lean-forward="false" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-second>
-    </splitter>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="Solver.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Solver.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="223">
+              <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding>
+                <element signature="e#164#180#0" expanded="true" />
+                <marker date="1519184706999" expanded="true" signature="367:4593" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="rules.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/input/rules.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="22">
+              <caret line="1" column="58" lean-forward="false" selection-start-line="1" selection-start-column="58" selection-end-line="1" selection-end-column="58" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="problem.lp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/problem.lp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="1024" column="34" lean-forward="false" selection-start-line="1024" selection-start-column="34" selection-end-line="1024" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DeviceConstraints.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/DeviceConstraints.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-202">
+              <caret line="39" column="62" lean-forward="false" selection-start-line="39" selection-start-column="62" selection-end-line="39" selection-end-column="62" />
+              <folding>
+                <element signature="e#307#323#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RuleConstraints.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/RuleConstraints.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="366">
+              <caret line="39" column="20" lean-forward="false" selection-start-line="39" selection-start-column="20" selection-end-line="39" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Controller.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Controller.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="223">
+              <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Main.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="44">
+              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ActionDuration.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/ActionDuration.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="814">
+              <caret line="38" column="0" lean-forward="true" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Parameters.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Parameters.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="437">
+              <caret line="35" column="30" lean-forward="false" selection-start-line="35" selection-start-column="30" selection-end-line="35" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -245,8 +142,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>]]]</find>
-      <find>PRINT</find>
       <find>sp_</find>
       <find>self.</find>
       <find>range</find>
@@ -267,6 +162,16 @@
       <find>d0_0</find>
       <find>vars</find>
       <find>print</find>
+      <find>_t</find>
+      <find>d0_t24</find>
+      <find>d0_t23</find>
+      <find>d0_t17_p0_0</find>
+      <find>d0_t22_p0_0</find>
+      <find>d0_t22_0</find>
+      <find>d0_t23_p0</find>
+      <find>d0_t16_p0</find>
+      <find>d0_t22_p</find>
+      <find>d0_t22_</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -310,14 +215,15 @@
         <option value="$PROJECT_DIR$/resources/input/dictionary.json" />
         <option value="$PROJECT_DIR$/src/RuleParser.py" />
         <option value="$PROJECT_DIR$/resources/input/rules.tsv" />
-        <option value="$PROJECT_DIR$/src/Parameters.py" />
         <option value="$PROJECT_DIR$/resources/input/rules.txt" />
+        <option value="$PROJECT_DIR$/src/Device.py" />
+        <option value="$PROJECT_DIR$/src/DeviceConstraints.py" />
+        <option value="$PROJECT_DIR$/src/problem.lp" />
+        <option value="$PROJECT_DIR$/src/Solver.py" />
         <option value="$PROJECT_DIR$/src/RuleConstraints.py" />
         <option value="$PROJECT_DIR$/src/Controller.py" />
-        <option value="$PROJECT_DIR$/src/Device.py" />
+        <option value="$PROJECT_DIR$/src/Parameters.py" />
         <option value="$PROJECT_DIR$/src/ActionDuration.py" />
-        <option value="$PROJECT_DIR$/src/Solver.py" />
-        <option value="$PROJECT_DIR$/src/DeviceConstraints.py" />
       </list>
     </option>
   </component>
@@ -348,6 +254,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -408,8 +316,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -797,22 +703,28 @@
       <option name="project" value="LOCAL" />
       <updated>1517299299905</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="First working version that generates a schedule for each value 'T' for one device and one rule of form: &quot;laundry_w before T&quot;&#10;Still a lot of bugs but almost there.">
+      <created>1518818297491</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1518818297491</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="2576" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Debug Logs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44080338" sideWeight="0.5042969" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3604651" sideWeight="0.49570313" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3615222" sideWeight="0.49570313" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Execute Anonymous" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.06914063" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08945312" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -860,7 +772,8 @@
     <MESSAGE value="update" />
     <MESSAGE value="implemented HVAC --- still need to add it to the rest of the program" />
     <MESSAGE value="Restructured entire project&#10; - made code much more &quot;loosely coupled&quot; so it is easier to pivot&#10; - combined hvac with other code&#10; - created Actions w/o duration&#10; &#10;TODO still: clean things up and remove dead code." />
-    <option name="LAST_COMMIT_MESSAGE" value="Restructured entire project&#10; - made code much more &quot;loosely coupled&quot; so it is easier to pivot&#10; - combined hvac with other code&#10; - created Actions w/o duration&#10; &#10;TODO still: clean things up and remove dead code." />
+    <MESSAGE value="First working version that generates a schedule for each value 'T' for one device and one rule of form: &quot;laundry_w before T&quot;&#10;Still a lot of bugs but almost there." />
+    <option name="LAST_COMMIT_MESSAGE" value="First working version that generates a schedule for each value 'T' for one device and one rule of form: &quot;laundry_w before T&quot;&#10;Still a lot of bugs but almost there." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1050,13 +963,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.PyCharm2017.1/system/python_stubs/143534049/_csv.py" />
     <entry file="file://$PROJECT_DIR$/src/Rule.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -1087,7 +993,7 @@
         <state relative-caret-position="286">
           <caret line="15" column="44" lean-forward="false" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
           <folding>
-            <element signature="e#248#258#0" expanded="true" />
+            <element signature="e#248#258#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1105,16 +1011,19 @@
         <state relative-caret-position="220">
           <caret line="12" column="11" lean-forward="false" selection-start-line="12" selection-start-column="11" selection-end-line="12" selection-end-column="11" />
           <folding>
-            <element signature="e#0#35#0" expanded="true" />
+            <element signature="e#0#35#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Parameters.py">
+    <entry file="file://$PROJECT_DIR$/src/Device.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="25" column="21" lean-forward="false" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
-          <folding />
+        <state relative-caret-position="1144">
+          <caret line="52" column="0" lean-forward="true" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+            <marker date="1518816845528" expanded="true" signature="1954:3763" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1126,69 +1035,74 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Controller.py">
+    <entry file="file://$PROJECT_DIR$/src/DeviceConstraints.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2354">
-          <caret line="116" column="0" lean-forward="false" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+        <state relative-caret-position="-202">
+          <caret line="39" column="62" lean-forward="false" selection-start-line="39" selection-start-column="62" selection-end-line="39" selection-end-column="62" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Device.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="616">
-          <caret line="52" column="0" lean-forward="true" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-            <marker date="1518816845528" expanded="true" signature="1954:3763" ph="..." />
+            <element signature="e#307#323#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/RuleConstraints.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="880">
-          <caret line="40" column="0" lean-forward="false" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+        <state relative-caret-position="366">
+          <caret line="39" column="20" lean-forward="false" selection-start-line="39" selection-start-column="20" selection-end-line="39" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ActionDuration.py">
+    <entry file="file://$PROJECT_DIR$/src/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1496">
-          <caret line="69" column="74" lean-forward="false" selection-start-line="69" selection-start-column="74" selection-end-line="69" selection-end-column="74" />
+        <state relative-caret-position="44">
+          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/problem.lp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1166">
-          <caret line="53" column="35" lean-forward="false" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="35" />
+        <state relative-caret-position="153">
+          <caret line="1024" column="34" lean-forward="false" selection-start-line="1024" selection-start-column="34" selection-end-line="1024" selection-end-column="34" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Controller.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Solver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2618">
-          <caret line="126" column="89" lean-forward="false" selection-start-line="126" selection-start-column="89" selection-end-line="126" selection-end-column="89" />
+        <state relative-caret-position="223">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
           <folding>
             <element signature="e#164#180#0" expanded="true" />
-            <marker date="1518817262269" expanded="true" signature="367:4721" ph="..." />
+            <marker date="1519184706999" expanded="true" signature="367:4593" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/DeviceConstraints.py">
+    <entry file="file://$PROJECT_DIR$/src/Parameters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="39" column="62" lean-forward="false" selection-start-line="39" selection-start-column="62" selection-end-line="39" selection-end-column="62" />
-          <folding>
-            <element signature="e#307#323#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="437">
+          <caret line="35" column="30" lean-forward="false" selection-start-line="35" selection-start-column="30" selection-end-line="35" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ActionDuration.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="814">
+          <caret line="38" column="0" lean-forward="true" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

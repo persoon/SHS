@@ -14,8 +14,6 @@ class ActionDuration:
     def add_rule_pref(self, rule):
         horizon = self.params.horizon
         duration = 0
-        DURATION = 0
-        prev_duration = 0
 
         max_kWh = 0
         for i in range(len(self.phases)):
@@ -27,26 +25,17 @@ class ActionDuration:
 
         DURATION = duration
 
-        for T in range(rule.time2, horizon-1):
+        for T in range(rule.time2+1, horizon):
             duration = DURATION
             prev_duration = 0
-            print(self.phases)
-            print(T)
+
             temp = []
-            print(self.phases[0][2], rule.time1, T - duration, self.phases[0][0], self.phases[0][1])
-            self.create_phase(self.phases[0][2], rule.time1, T - duration, self.phases[0][0], self.phases[0][1])
-            temp2 = (self.phases[0][0], self.phases[0][1], self.name+'_t'+str(T+1)+'_p0')
-            temp.append(temp2)
-            for j in range(1, len(self.phases)):
-                duration -= self.phases[j-1][0]
-                prev_duration += self.phases[j-1][0]
-                print(self.phases[j][2], rule.time1 + prev_duration, T - duration, self.phases[j][0], self.phases[j][1])
-                self.create_phase(self.phases[j][2], rule.time1 + prev_duration, T - duration, self.phases[j][0], self.phases[j][1])
-                self.connect_phases(self.phases[j-1][2], self.phases[j][2], self.phases[j][0])
-                temp2 = (self.phases[j][0], self.phases[j][1], self.name+'_t'+str(T+1)+'_p'+str(j))
+            self.name = self.name.split('_')[0] + '_t' + str(T)
+            for j in range(0, len(self.phases)):
+                temp2 = (self.phases[j][0], self.phases[j][1], self.name + '_p' + str(j))
                 temp.append(temp2)
             self.phases = temp
-            self.name = self.name.split('_')[0] + '_t' + str(T)
+            print(self.name)
 
             self.model.variables.add(
                 names=[self.name + '_' + str(k) for k in range(horizon)],
@@ -80,6 +69,17 @@ class ActionDuration:
                 senses=['E'],
                 rhs=[1.0]
             )
+
+            # creating and connecting each action so each one happens after another
+            self.create_phase(self.phases[0][2], rule.time1, T - duration, self.phases[0][0], self.phases[0][1])
+            for j in range(1, len(self.phases)):
+                duration -= self.phases[j-1][0]
+                prev_duration += self.phases[j-1][0]
+                self.create_phase(self.phases[j][2], rule.time1 + prev_duration, T - duration, self.phases[j][0], self.phases[j][1])
+                self.connect_phases(self.phases[j-1][2], self.phases[j][2], self.phases[j][0])
+
+
+
 
     # TODO: create 'setup_actions()' which creates all of the phases and rules for when each phase can be run 1/26/2018
     # TODO: (cont'd) 'add_rule_constraints()' sets the req. that p_1 doesnt start before time1 & p_n ends before time2

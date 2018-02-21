@@ -37,7 +37,7 @@ class RuleConstraints:
                     if dev not in used:
                         used.append(dev)
 
-                    # mode_cons[i][1].add_rule_constraints(r)
+                    mode_cons[i][1].add_rule_constraints(r)
                     mode_cons[i][1].add_rule_pref(r)
                     print(name + " -------------------------")
                     print(r.to_string())

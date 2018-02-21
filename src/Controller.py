@@ -34,13 +34,29 @@ def execute():
         print(rules[i].to_string())
         print()
     '''
+
+    # prints out all of the best solutions (with increasing discomfort level)
+    for T in range(17, params.horizon):
+        print('Solution d0_t' + str(T) + ':', round(solution.get_values('d0_t' + str(T)), 2))
+
+    # solution if normal rule is used
     print('-------------------------------------')
     for d in range(len(devices)):
         print(devices[d].name)
         for p in range(len(devices[d].phases)):
             print(devices[d].mode[p]['name'] + ':', end='\t')
             for t in range(params.horizon):
-                print(int(solution.get_values('d'+str(d)+'_p'+str(p)+'_'+str(t))) ,end='\t')
+                print(int(solution.get_values('d'+str(d)+'_p'+str(p)+'_'+str(t))), end='\t')
+            print()
+        print('-------------------------------------')
+
+
+    for s in range(17, params.horizon):
+        print('T =', s)
+        for p in range(len(devices[0].phases)):
+            print(devices[0].mode[p]['name'] + ':', end='\t')
+            for t in range(params.horizon):
+                print(int(solution.get_values('d0_t'+str(s)+'_p'+str(p)+'_'+str(t))), end='\t')
             print()
         print('-------------------------------------')
 

@@ -121,12 +121,6 @@ class Solver:
         print('objPrice: ', round(solution.get_values('objPrice')))
         print('objPower: ', round(solution.get_objective_value()) - round(solution.get_values('objPrice')))
 
-
-
-        for T in range(16, 23):
-            print('Solution d0_t'+str(T)+':', round(solution.get_values('d0_t'+str(T)), 2))
-
-
         return solution
 '''
 dictionary = src.Reader.Reader().get_dictionary()

@@ -5,10 +5,12 @@
 # uses "Borg" pattern
 
 import cplex
-from cplex.exceptions import CplexError
+import src.Utilities as util
+
 
 class Model:
     model = cplex.Cplex()
+    util.suppress_sol_out(model)
     """
     --- Borg pattern ---
     https://stackoverflow.com/questions/747793/python-borg-pattern-problem/747888#747888
@@ -20,3 +22,5 @@ class Model:
 
     def reset_solver(self):
         self.model = cplex.Cplex()
+        util.suppress_sol_out(self.model)
+        return self.model

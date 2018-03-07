@@ -1,13 +1,9 @@
 import src.Parameters
-import src.RuleParser as RP
-import src.Rule as R
 import src.Reader
-import cplex
-from cplex.exceptions import CplexError
-#import numpy
-import time
-import random
 import src.Solver as Solver
+import src.Utilities as util
+from src.gauss import UserExpectation as user
+
 
 params = src.Parameters.Parameters()
 
@@ -15,39 +11,68 @@ params = src.Parameters.Parameters()
 def execute():
     dictionary = src.Reader.Reader().get_dictionary()
     devices = [
-        # dictionary.get_device(device_type='HVAC', mode_name='cool', dID=0),
         dictionary.get_device(device_type='washer', device_name='GE_WSM2420D3WW', mode_name="regular_w", dID=0),
-        # dictionary.get_device(device_type='dryer', device_name='GE_WSM2420D3WW', mode_name="regular_d", dID=2),
-        # dictionary.get_device(device_type='oven', device_name='Kenmore_790', mode_name="bake", dID=3),
-        # dictionary.get_device(device_type='dishwasher', device_name='Kenmore_665', mode_name="wash", dID=4)
     ]
-    params = src.Parameters.Parameters()
+
     params.devices = devices
     solver = Solver.Solver(params=params)
+
     solution = solver.solve()
 
+    reg_price = round(solution.get_values('objPrice'), 2)
+
+    pref_price = [reg_price]
+    rule = params.rules[0]
+    print(params.rules[0].time2, ':', reg_price)
+    rtime2 = rule.time2
+
+    span = params.horizon - (rtime2+1)
+    freq = 25  # distance between samples
+
+    num_tries = int(span/freq)
+    Ydata = []
+    Xdata = []
+    for t in range(num_tries):
+        _time = rtime2 + ((t+1) * freq)
+        _time = min(params.horizon-1, _time)
+        rule.time2 = _time
+        params.rules[0] = rule
+        solver.reset(params=params)
+
+        solution = solver.solve()
+        p = round(solution.get_values('objPrice'), 2)
+        print(params.rules[0].time2, ':', p)
+        pref_price.append(p)
+
+        Ydata.append(pref_price[0] - pref_price[len(pref_price)-1])
+        Xdata.append(_time)
+        # print_info(solution=solution, devices=devices)
+
+    usr = user(rtime2, params.horizon-1)
+
+    usr.gauss(Xdata=Xdata, Ydata=Ydata)
+
     '''
-    rules = []
-    for i in range(len(devices)):
-        print(devices[i].to_string())
-        rules.append(generate_rule(devices[i]))
-        print(rules[i].to_string())
-        print()
+    for i in range(len(pref_price)):
+        print(rtime2+i, ':', pref_price[i])
     '''
 
-    rule_pref = solver.rule_pref
-    # prints out all of the best solutions (with increasing discomfort level)
-    for s in range(len(rule_pref)):
-        print('Solution ' + str(rule_pref[s][0]) + '_t' + str(rule_pref[s][2]) + ':', round(solution.get_values('d0_t' + str(rule_pref[s][2])), 2))
 
+# NOTE: rule_pref can be obtained from solver.rule_pref
+def print_info(solution, devices=None, rule_pref=None):
     # solution if normal rule is used
+    if devices is None:
+        devices = []
+    if rule_pref is None:
+        rule_pref = []
+
     print('-------------------------------------')
     for d in range(len(devices)):
         print(devices[d].name)
         for p in range(len(devices[d].phases)):
             print(devices[d].mode[p]['name'] + ':', end='\t')
             for t in range(params.horizon):
-                print(int(solution.get_values('d'+str(d)+'_p'+str(p)+'_'+str(t))), end='\t')
+                print(int(solution.get_values('d' + str(d) + '_p' + str(p) + '_' + str(t))), end='\t')
             print()
         print('-------------------------------------')
 
@@ -57,15 +82,42 @@ def execute():
             dname = rule_pref[s][0]
             print(devices[int(rule_pref[s][0].replace('d', ''))].mode[p]['name'] + ':', end='\t')
             for t in range(params.horizon):
-                print(int(solution.get_values(dname+'_t'+str(rule_pref[s][2])+'_p'+str(p)+'_'+str(t))), end='\t')
+                print(int(solution.get_values(dname + '_t' + str(rule_pref[s][2]) + '_p' + str(p) + '_' + str(t))),
+                      end='\t')
             print()
         print('-------------------------------------')
 
+    # prints out all of the best solutions (with increasing discomfort level)
+    for s in range(len(rule_pref)):
+        print('Solution ' + str(rule_pref[s][0]) + '_t' + str(rule_pref[s][2]) + ':',
+              round(solution.get_values('d0_t' + str(rule_pref[s][2])), 2))
 
-    ''' TODO: Fix schedule printing with new Solver '''
-    #f = open('resources/output/schedule.txt', 'w')
-    #f.write(run_experiment(timeout=10, devices=devices, rules=rules))
-    #f.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # generates devices

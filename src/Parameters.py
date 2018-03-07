@@ -5,7 +5,7 @@ import src.RuleParser as rp
 
 
 class Parameters:
-    horizon = 24
+    horizon = 192
     htype = 1          # house type
     city = 'houston'   # city name
     season = 'summer'  # season
@@ -49,7 +49,7 @@ class Parameters:
     ]
     '''
 
-    # model = cplex.Cplex()
+    hasSetup = False
 
     """
     Borg pattern --- https://stackoverflow.com/questions/747793/python-borg-pattern-problem/747888#747888
@@ -59,6 +59,11 @@ class Parameters:
     # todo: remove need for 'Borg' because 'Borg' pattern causes all these things to initialize over and over
     def __init__(self):
         self.__dict__ = self.__we_are_one
+        if not self.hasSetup:
+            self.setup()
+            self.hasSetup = True
+
+    def setup(self):
         rule_parser = rp.RuleParser()
         import os
         cwd = os.getcwd()
@@ -69,6 +74,7 @@ class Parameters:
         self.scale_factor = int(self.horizon / file_horizon)
         self.convert_arrays()
         self.convert_rules()
+
 
     # converts rules to the appropriate times based on scale_factor
     def convert_rules(self):

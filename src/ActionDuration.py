@@ -84,7 +84,6 @@ class ActionDuration:
 
         for i in range(len(self.phases)):
             duration += self.phases[i][0]
-        print('duration', duration)
         self.create_phase(self.phases[0][2], time1, time2 - duration, self.phases[0][0], self.phases[0][1])
         self.var_names[0].append(self.phases[0][2])
 

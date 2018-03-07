@@ -18,13 +18,16 @@ class RuleConstraints:
         used = []
         rrules = []
         for r in rules:
-            loc = r.location.split(":")
-            if loc[0] == "d":
-                r.location = loc[1]
+            if ':' in r.location:
+                loc = r.location.split(":")
+                if loc[0] == "d":
+                    r.location = loc[1]
+                    drules.append(r)
+                else:
+                    r.location = loc[1]
+                    rrules.append(r)
+            else:  # TODO: make dictionary look for device 'loc' and if not found then add to room rules
                 drules.append(r)
-            else:
-                r.location = loc[1]
-                rrules.append(r)
 
         for r in drules:
             for i in range(len(mode_cons)):
@@ -40,6 +43,7 @@ class RuleConstraints:
                     mode_cons[i][1].add_rule_constraints(r)
 
                     # Nando ---- look at this ################################################
+                    '''
                     r.time2 += 1  # because rules.txt has 'wash before 16', this tests 'before 17'
                     mode_cons[i][1].add_rule_pref(r)
                     self.rule_pref.append((name, len(dev.phases), r.time2))
@@ -47,12 +51,14 @@ class RuleConstraints:
                     r.time2 += 3  # because r.time2 = 17, this tests 'before 20'
                     mode_cons[i][1].add_rule_pref(r)
                     self.rule_pref.append((name, len(dev.phases), r.time2))
+                    '''
                     ##########################################################################
-
+                    '''
                     print(name + " -------------------------")
                     print(r.to_string())
                     print(dname, dev.mode_name)
                     print("----------------------------")
+                    '''
                     del mode_cons[i]
                     break
 

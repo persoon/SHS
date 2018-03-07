@@ -45,8 +45,10 @@ class Rule:
             raise Exception('R1: not a valid time prefix')
 
     def to_string(self):
-        return str(self.active) + ' ' +\
-                (str(self.r_type) + '\t') if self.r_type is not None else '' +\
-                self.location + '\t' + self.sp + '\t' + self.predicate + '\t' +\
-                str(self.goal) + '\t' + str(self.prefix) + '\t' +\
-                str(self.time1) + '\t' + str(self.time2)
+        s  = str(self.active) + ' '
+        s += (str(self.r_type) + '\t') if self.r_type is not None else ''
+        s += self.location + '\t' + self.sp + '\t'
+        s += (str(self.predicate) + '\t') if self.predicate is not None else ''
+        s += str(self.goal) + '\t' + str(self.prefix) + '\t'
+        s += str(self.time1) + '\t' + str(self.time2)
+        return s

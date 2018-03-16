@@ -41,16 +41,16 @@ def acq_max(ac, gp, y_max, bounds, random_state, n_warmup=100000, n_iter=250):
     -------
     :return: x_max, The arg max of the acquisition function.
     """
-
+    # TODO: make this pull from a list of all possible integers between bounds
     # Warm up with random points
-    x_tries = random_state.uniform(bounds[:, 0], bounds[:, 1],
+    x_tries = random_state.randint(bounds[:, 0], bounds[:, 1],
                                    size=(n_warmup, bounds.shape[0]))
     ys = ac(x_tries, gp=gp, y_max=y_max)
     x_max = x_tries[ys.argmax()]
     max_acq = ys.max()
 
     # Explore the parameter space more throughly
-    x_seeds = random_state.uniform(bounds[:, 0], bounds[:, 1],
+    x_seeds = random_state.randint(bounds[:, 0], bounds[:, 1],
                                    size=(n_iter, bounds.shape[0]))
     for x_try in x_seeds:
         # Find the minimum of minus the acquisition function

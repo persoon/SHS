@@ -47,7 +47,7 @@ class UserExpectation:
     # hehe.
     def showBlackbox(self):
         # Xtest is 'n' evenly spaced samples from start to end -- we can use it to print out our graph or something
-        Xtest = np.linspace(self.support[0], self.support[1], num=(self.support[1] - self.support[0])).reshape(-1, 1)
+        Xtest = np.linspace(self.support[0], self.support[1], num=self.n).reshape(-1, 1)
         plt.plot(Xtest, self.blackbox)
         plt.axis([self.support[0], self.support[1], 0, 591])
         plt.show()
@@ -60,7 +60,7 @@ class UserExpectation:
     def gauss(self, Xdata, Ydata):
         Xtest = np.linspace(self.support[0], self.support[1], num=self.n).reshape(-1, 1)
         # The parameter denotes the 'smoothness' of our prior
-        param = 10
+        param = 20
         K_ss = self.kernel(Xtest, Xtest, param)  # we estimate K**
 
         # Get cholesky decomposition (square root) of the covariance

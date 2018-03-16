@@ -3,9 +3,23 @@ import src.Reader
 import src.Solver as Solver
 import src.Utilities as util
 from src.gauss import UserExpectation as user
-
+from src.bayes_opt.bayesian_optimization import BayesianOptimization as bayesian
 
 params = src.Parameters.Parameters()
+
+horizon = params.horizon
+rt2 = params.rules[0].time2
+
+pbounds = {'t': (rt2, horizon-1)}
+print(pbounds)
+solver = Solver.Solver(params=params)
+usr = user(rt2, horizon-1)
+
+def target_function(t):
+    params.rules[0].time2 = int(t)  # Todo: figure out how to make t always try integers
+    solver.reset(params=params)
+    solution = solver.solve()
+    return round(usr.getValue(x=int(t)) - solution.get_values('objPrice'), 2) + 690
 
 
 def execute():
@@ -15,7 +29,6 @@ def execute():
     ]
 
     params.devices = devices
-    solver = Solver.Solver(params=params)
 
     solution = solver.solve()
 
@@ -24,16 +37,21 @@ def execute():
     pref_price = [reg_price]
     rule = params.rules[0]
     print(params.rules[0].time2, ':', reg_price)
-    rtime2 = rule.time2
 
-    span = params.horizon - (rtime2+1)
+    span = params.horizon - (rt2+1)
     freq = 25  # distance between samples
 
     num_tries = int(span/freq)
     Ydata = []
     Xdata = []
+
+    # rule, horizon
+    bay = bayesian(f=target_function, pbounds=pbounds)
+    bay.maximize()
+
+    '''
     for t in range(num_tries):
-        _time = rtime2 + ((t+1) * freq)
+        _time = rt2 + ((t+1) * freq)
         _time = min(params.horizon-1, _time)
         rule.time2 = _time
         params.rules[0] = rule
@@ -49,8 +67,10 @@ def execute():
         # print_info(solution=solution, devices=devices)
 
     usr = user(rtime2, params.horizon-1)
-
+    print(rtime2, params.horizon-1)
+    usr.showBlackbox()
     usr.gauss(Xdata=Xdata, Ydata=Ydata)
+    '''
 
     '''
     for i in range(len(pref_price)):

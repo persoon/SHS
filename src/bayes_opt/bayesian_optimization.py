@@ -81,10 +81,21 @@ class BayesianOptimization(object):
         """
         # Concatenate new random points to possible existing
         # points from self.explore method.
-        rand_points = self.space.random_points(init_points)
+        # rand_points = self.space.random_points(init_points)
+        # self.init_points.extend(rand_points)
+        init_points = 25
+        data = np.empty((init_points, self.space.dim))
+        i = 88
+        for arr in data:
+            arr[0] = i
+            i += 1
 
-        ############self.init_points.extend(rand_points)
-        self.init_points.extend([[self.pbounds['t'][0]]])
+        print(data)
+
+
+        self.init_points.extend(data)
+
+        # self.init_points[0].append(self.pbounds['t'][0])
 
         # Evaluate target function at all initialization points
         for x in self.init_points:
@@ -267,7 +278,6 @@ class BayesianOptimization(object):
                         bounds=self.space.bounds,
                         random_state=self.random_state,
                         **self._acqkw)
-        print('x_max first:', x_max)
 
         # Print new header
         if self.verbose:

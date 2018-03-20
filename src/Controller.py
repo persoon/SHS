@@ -5,6 +5,7 @@ import src.Utilities as util
 from src.gauss import UserExpectation as user
 from src.bayes_opt.bayesian_optimization import BayesianOptimization as bayesian
 
+
 params = src.Parameters.Parameters()
 
 horizon = params.horizon

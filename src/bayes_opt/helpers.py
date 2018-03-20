@@ -43,27 +43,36 @@ def acq_max(ac, gp, y_max, bounds, random_state, n_warmup=100000, n_iter=250):
     """
     # TODO: make this pull from a list of all possible integers between bounds
     # Warm up with random points
-    x_tries = random_state.randint(bounds[:, 0], bounds[:, 1],
+    x_tries = random_state.uniform(bounds[:, 0], bounds[:, 1],
                                    size=(n_warmup, bounds.shape[0]))
     ys = ac(x_tries, gp=gp, y_max=y_max)
     x_max = x_tries[ys.argmax()]
     max_acq = ys.max()
 
     # Explore the parameter space more throughly
-    x_seeds = random_state.randint(bounds[:, 0], bounds[:, 1],
+    x_seeds = random_state.uniform(bounds[:, 0], bounds[:, 1],
                                    size=(n_iter, bounds.shape[0]))
+
+    res_final = -1
     for x_try in x_seeds:
         # Find the minimum of minus the acquisition function
-        res = minimize(lambda x: -ac(x.reshape(1, -1), gp=gp, y_max=y_max),
-                       x_try.reshape(1, -1),
-                       bounds=bounds,
-                       method="L-BFGS-B")
-
+        fun = lambda x: -ac(x.reshape(1, -1), gp=gp, y_max=y_max)
+        constr = ({'type': 'ineq', 'fun': lambda x: x - 180},
+                  {'type': 'ineq', 'fun': lambda x: 185 - x})  # (x  >= 180) == (x - 180 >= 0)
+        res = minimize(
+            fun,
+            x_try.reshape(1, -1),
+            bounds=bounds,
+            method="SLSQP", # "L-BFGS-B" "COBYLA" "SLSQP"
+            constraints=constr
+        )
+        # print("res", res)
         # Store it if better than previous minimum(maximum).
-        if max_acq is None or -res.fun[0] >= max_acq:
+        if max_acq is None or -res.fun >= max_acq:
+            res_final = res
             x_max = res.x
-            max_acq = -res.fun[0]
-
+            max_acq = -res.fun
+    # print("res_final", res_final)
     # Clip output to make sure it lies within the bounds. Due to floating
     # point technicalities this is not always the case.
     return np.clip(x_max, bounds[:, 0], bounds[:, 1])

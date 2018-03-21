@@ -136,7 +136,6 @@ class TargetSpace(object):
         else:
             # measure the target function
             params = dict(zip(self.keys, x))
-            print(params)
             y = self.target_func(**params)  # TODO: schedule_0 - (schedule_x - user_preference_x)
             self.add_observation(x, y)
         return y

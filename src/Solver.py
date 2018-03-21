@@ -204,3 +204,17 @@ class Solver:
         '''
         return solution
 
+
+    # TODO: put this code inside rule constraints and make them loadable with rules.txt
+    # Constraint: device1 must finish before device2 starts
+    # device1.phase_n + d1.p_n.duration < device2.phase_1
+    def dependancy(self, device1, device2):
+        d1pn = device1.phases[len(device1.phases)-1]
+        d2p1 = device2.phases[0]
+        print(d1pn)
+        print(d2p1)
+        self.model.linear_constraints.add(
+            lin_expr=[cplex.SparsePair(ind=[d2p1[2], d1pn[2]], val=[1.0, -1.0])],
+            senses=['G'],
+            rhs=[d1pn[0]]
+        )

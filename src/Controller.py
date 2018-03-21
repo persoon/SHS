@@ -8,14 +8,15 @@ from src.bayes_opt.bayesian_optimization import BayesianOptimization as bayesian
 params = src.Parameters.Parameters()
 
 horizon = params.horizon
-rt2 = params.rules[0].time2
-
-pbounds = {'t': (rt2, horizon-1)}
+rt2_1 = params.rules[0].time2
+rt2_2 = params.rules[1].time2
+pbounds = {'t': (rt2_1, horizon-1)}  # , 't2': (rt2_2, horizon-1)}
 print(pbounds)
 solver = Solver.Solver(params=params)
-usr = user(rt2, horizon-1)
+usr = user(rt2_1, horizon-1, rt2_2, horizon-1)
 
-def target_function(t):
+
+def target_function(t):  # , t2):
     params.rules[0].time2 = int(t)  # Todo: figure out how to make t always try integers
     solver.reset(params=params)
     solution = solver.solve()
@@ -26,10 +27,15 @@ def execute():
     dictionary = src.Reader.Reader().get_dictionary()
     devices = [
         dictionary.get_device(device_type='washer', device_name='GE_WSM2420D3WW', mode_name="regular_w", dID=0),
+        #dictionary.get_device(device_type= 'dryer', device_name='GE_WSM2420D3WW', mode_name="regular_d", dID=0)
     ]
 
+    # NOTE:2430 for dryer 243 for low end
+    # dryer values: time# 88 = 2430
+    #               time#191 =  243
     params.devices = devices
-
+    solver.reset(params=params)
+    #solver.dependancy(devices[0], devices[1])
     solution = solver.solve()
 
     reg_price = round(solution.get_values('objPrice'), 2)
@@ -37,8 +43,10 @@ def execute():
     pref_price = [reg_price]
     rule = params.rules[0]
     print(params.rules[0].time2, ':', reg_price)
-
-    span = params.horizon - (rt2+1)
+    #print(solution.get_values('d0_p2'))
+    #print(solution.get_values('d1_p0'))
+    print_info(solution, devices)
+    span = params.horizon - (rt2_1+1)
     freq = 25  # distance between samples
 
     num_tries = int(span/freq)
@@ -48,7 +56,6 @@ def execute():
     # rule, horizon
     bay = bayesian(f=target_function, pbounds=pbounds)
     bay.maximize()
-
     '''
     for t in range(num_tries):
         _time = rt2 + ((t+1) * freq)

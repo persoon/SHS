@@ -5,12 +5,11 @@ from src.bayes_opt import BayesianOptimization
 
 
 class UserExpectation:
-
-    def __init__(self, start, end):
+    # todo: make this not static --- we are trying to model a washer and dry right now and this wasn't top priority
+    def __init__(self, start, end, start2, end2):
         assert(start < end)
         self.support = [start, end]
         self.n = end - start + 1
-
 
         knowledge = [0, 156, 344, 450, 498, 400, 279, 142, 10, 14, 150, 214]
         dist = self.n / (len(knowledge)-1)
@@ -31,8 +30,6 @@ class UserExpectation:
             k_nd = np.concatenate((k_nd, [214.0]))
 
         # This is the preferences of the user:
-
-
         self.blackbox = k_nd
 
         # this is what a prior is: https://en.wikipedia.org/wiki/Prior_probability
@@ -40,9 +37,39 @@ class UserExpectation:
         # we will probably use a uniform prior
         # Cholesky Decomposition --- http://www.gaussianprocess.org/gpml/chapters/RWA.pdf  --- pg.4
 
+        assert (start2 < end2)
+        self.support2 = [start2, end2]
+        self.n2 = end2 - start2 + 1
+
+        knowledge2 = [0, 156, 344, 450, 498, 400, 279, 142, 10, 14, 150, 214]
+        dist2 = self.n2 / (len(knowledge2) - 1)
+        # for i in range(len(knowledge)):
+        #    knowledge[i][0] = int(knowledge[i][0] * dist)
+
+        print(start2, end2, end2 - start2)
+        print(dist2)
+        print(knowledge2)
+
+        k_nd2 = np.linspace(float(knowledge2[0]), float(knowledge2[1]), num=int(dist2))
+        for i in range(len(knowledge2) - 2):
+            k_new2 = np.linspace(float(knowledge2[i + 1]), float(knowledge2[i + 2]), num=int(dist2 + 1))
+            k_new2 = np.delete(k_new2, 0)
+            k_nd2 = np.concatenate((k_nd2, k_new2))
+
+        while len(k_nd2) < self.n:
+            k_nd2 = np.concatenate((k_nd2, [214.0]))
+
+        # This is the preferences of the user:
+        self.blackbox2 = k_nd2
+
+
     def getValue(self, x):
         print(x, self.support[0])
         return self.blackbox[x-self.support[0]]
+
+    def getValue2(self, x):
+        print(x, self.support[0])
+        return self.blackbox2[x-self.support2[0]]
 
     # hehe.
     def showBlackbox(self):
@@ -52,6 +79,14 @@ class UserExpectation:
         plt.axis([self.support[0], self.support[1], 0, 591])
         plt.show()
 
+    def showBlackbox2(self):
+        # Xtest is 'n' evenly spaced samples from start to end -- we can use it to print out our graph or something
+        Xtest = np.linspace(self.support2[0], self.support2[1], num=self.n2).reshape(-1, 1)
+        plt.plot(Xtest, self.blackbox2)
+        plt.axis([self.support2[0], self.support2[1], 0, 591])
+        plt.show()
+
+    '''
     def kernel(self, x, y, sigma):
         sqdist = np.sum(x ** 2, 1).reshape(-1, 1) + np.sum(y ** 2, 1) - 2 * np.dot(x, y.T)
         return np.exp(-0.5 * 1 / sigma * sqdist)
@@ -116,3 +151,4 @@ class UserExpectation:
         plt.plot(Xtest, mu, 'r--', lw=3)
         plt.axis([self.support[0], self.support[1], -500, 500])
         plt.show()
+    '''

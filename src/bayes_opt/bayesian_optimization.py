@@ -7,7 +7,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import Matern
 from .helpers import (UtilityFunction, PrintLog, acq_max, ensure_rng)
 from .target_space import TargetSpace
-
+import Bound
 
 class BayesianOptimization(object):
 
@@ -83,8 +83,11 @@ class BayesianOptimization(object):
         # points from self.explore method.
         rand_points = self.space.random_points(init_points)
 
-        ############self.init_points.extend(rand_points)
+        self.init_points.extend(rand_points)
         self.init_points.extend([[self.pbounds['t'][0]]])
+        self.init_points.extend([[self.pbounds['t'][1]]])
+
+        # self.init_points = list(set(round(i) for i in self.init_points[0]))
 
         # Evaluate target function at all initialization points
         for x in self.init_points:
@@ -236,10 +239,11 @@ class BayesianOptimization(object):
         >>>                           pbounds={"x": (0, len(f)-1)})
         >>> bo.maximize(init_points=2, n_iter=25, acq="ucb", kappa=1)
         """
+        ''' REMOVED BY BILL:
         if isinstance(noise_sd, float):
             noise_sd = [noise_sd] * n_iter
         assert len(noise_sd) == n_iter
-
+        '''
         # Reset timer
         self.plog.reset_timer()
 
@@ -251,6 +255,11 @@ class BayesianOptimization(object):
             if self.verbose:
                 self.plog.print_header()
             self.init(init_points)
+
+        point_bounds = []
+        LB, UB = self.space.bounds[0][0], self.space.bounds[0][1]
+        for point in self.init_points:
+            point_bounds = Bound.add_bound(LB, UB, point_bounds, point[0])
 
         y_max = self.space.Y.max()
 
@@ -265,9 +274,11 @@ class BayesianOptimization(object):
                         gp=self.gp,
                         y_max=y_max,
                         bounds=self.space.bounds,
+                        point_bounds=point_bounds,
                         random_state=self.random_state,
                         **self._acqkw)
-        print('x_max first:', x_max)
+
+        point_bounds = Bound.add_bound(LB, UB, point_bounds, round(x_max))
 
         # Print new header
         if self.verbose:
@@ -279,17 +290,25 @@ class BayesianOptimization(object):
         # The arg_max of the acquisition function is found and this will be
         # the next probed value of the target function in the next round.
         for i in range(n_iter):
+
+            # SHOULDNT NEED THIS:
+            '''
             # Test if x_max is repeated, if it is, draw another one at random
             # If it is repeated, print a warning
             pwarning = False
             while x_max in self.space:
                 x_max = self.space.random_points(1)[0]
                 pwarning = True
-
+            '''
             # Append most recently generated values to X and Y arrays
-            y = self.space.observe_point(x_max, noise_sd[i])
+            y = self.space.observe_point(x_max)  # , noise_sd[i]) REMOVED BY BILL 3/19/2018
+            pwarning = False
             if self.verbose:
-                self.plog.print_step(x_max, y, pwarning)
+                print('________________________________________')
+                print('Step  |   Time |   Value    |         t |')
+                self.plog.print_step([x_max], y, pwarning)
+                print('----------------------------------------|')
+
 
             # Updating the GP.
             self.gp.fit(self.space.X, self.space.Y)
@@ -297,7 +316,7 @@ class BayesianOptimization(object):
             # Update the best params seen so far
             self.res['max'] = self.space.max_point()
             self.res['all']['values'].append(y)
-            self.res['all']['params'].append(dict(zip(self.space.keys, x_max)))
+            self.res['all']['params'].append(dict(zip(self.space.keys, [x_max])))
 
             # Update maximum value to search for next probe point.
             if self.space.Y[-1] > y_max:
@@ -308,14 +327,22 @@ class BayesianOptimization(object):
                             gp=self.gp,
                             y_max=y_max,
                             bounds=self.space.bounds,
+                            point_bounds=point_bounds,
                             random_state=self.random_state,
                             **self._acqkw)
 
+            # Sets up the bounds used to select points --- this section is because we need to choose integers
+            point_bounds = Bound.add_bound(LB, UB, point_bounds, round(x_max))
+
             # Keep track of total number of iterations
-            self.i += 1
+            i += 1
 
         # Print a final report if verbose active.
         if self.verbose:
+            print('=======================================')
+            print('SUMMARY:')
+            print('y_max:', y_max)
+
             self.plog.print_summary()
 
     def points_to_csv(self, file_name):

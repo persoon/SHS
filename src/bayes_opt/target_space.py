@@ -251,7 +251,7 @@ class TargetSpace(object):
         # TODO: support integer, category, and basic scipy.optimize constraints
         data = np.empty((num, self.dim))
         for col, (lower, upper) in enumerate(self.bounds):
-            data.T[col] = self.random_state.randint(lower, upper, size=num)
+            data.T[col] = self.random_state.uniform(lower, upper, size=num)
         return data
 
     def max_point(self):

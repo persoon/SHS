@@ -4,9 +4,10 @@ import numpy as np
 from datetime import datetime
 from scipy.stats import norm
 from scipy.optimize import minimize
+from math import floor, ceil
 
 
-def acq_max(ac, gp, y_max, bounds, random_state, n_warmup=100000, n_iter=250):
+def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100000, n_iter=250):
     """
     A function to find the maximum of the acquisition function
 
@@ -28,11 +29,17 @@ def acq_max(ac, gp, y_max, bounds, random_state, n_warmup=100000, n_iter=250):
     :param bounds:
         The variables bounds to limit the search of the acq max.
 
+    :param point_bounds:
+        ### Description by Bill --- Idea by Nando ###
+        The boundaries for each point tried so far.
+        If I tried points [ 3,  6,  100 ] and bounds are [0, 100]:
+            point_bounds = [[2.5, 3.5], [5.5, 6.5], [99.5, 100]]
+
     :param random_state:
         instance of np.RandomState random number generator
 
     :param n_warmup:
-        number of times to randomly sample the aquisition function
+        number of times to randomly sample the acquisition function
 
     :param n_iter:
         number of times to run scipy.minimize
@@ -42,31 +49,58 @@ def acq_max(ac, gp, y_max, bounds, random_state, n_warmup=100000, n_iter=250):
     :return: x_max, The arg max of the acquisition function.
     """
     # TODO: make this pull from a list of all possible integers between bounds
-    # Warm up with random points
-    x_tries = random_state.randint(bounds[:, 0], bounds[:, 1],
-                                   size=(n_warmup, bounds.shape[0]))
-    ys = ac(x_tries, gp=gp, y_max=y_max)
-    x_max = x_tries[ys.argmax()]
-    max_acq = ys.max()
 
-    # Explore the parameter space more throughly
-    x_seeds = random_state.randint(bounds[:, 0], bounds[:, 1],
-                                   size=(n_iter, bounds.shape[0]))
-    for x_try in x_seeds:
-        # Find the minimum of minus the acquisition function
-        res = minimize(lambda x: -ac(x.reshape(1, -1), gp=gp, y_max=y_max),
-                       x_try.reshape(1, -1),
-                       bounds=bounds,
-                       method="L-BFGS-B")
+    if point_bounds is None:
+        point_bounds = []
 
-        # Store it if better than previous minimum(maximum).
-        if max_acq is None or -res.fun[0] >= max_acq:
-            x_max = res.x
-            max_acq = -res.fun[0]
+    if len(point_bounds) == 0:
+        point_bounds.append((bounds[0][0], bounds[0][0]))
+        point_bounds.append((bounds[0][1], bounds[0][1]))
 
+    if point_bounds[0][0] != bounds[0][0]:
+        point_bounds.insert(0, (bounds[0][0], bounds[0][0]))
+    if point_bounds[len(point_bounds)-1][1] != bounds[0][1]:
+        point_bounds.insert(len(point_bounds), (bounds[0][1], bounds[0][1]))
+
+    solutions = []
+    print('POINTS:', point_bounds)
+    for i in range(len(point_bounds)-1):
+
+        bounds = np.array([[point_bounds[i][1], point_bounds[i+1][0]]], dtype=np.float)
+        print('BOUNDS:', bounds, end='\t')
+        # Warm up with random points
+        x_tries = random_state.uniform(bounds[:, 0], bounds[:, 1], size=(n_warmup, bounds.shape[0]))
+        ys = ac(x_tries, gp=gp, y_max=y_max)
+        x_max = x_tries[ys.argmax()]
+        max_acq = ys.max()
+
+        # Explore the parameter space more thoroughly
+        x_seeds = random_state.uniform(bounds[:, 0], bounds[:, 1], size=(n_iter, bounds.shape[0]))
+        for x_try in x_seeds:
+            # Find the minimum of minus the acquisition function
+            res = minimize(lambda x: -ac(x.reshape(1, -1), gp=gp, y_max=y_max),
+                           x_try.reshape(1, -1),
+                           bounds=bounds,
+                           method="L-BFGS-B")
+
+            # Store it if better than previous minimum(maximum).
+            if max_acq is None or -res.fun[0] >= max_acq:
+                x_max = res.x
+                max_acq = -res.fun[0]
+
+        if floor(x_max[0]) == floor(bounds[0][0]):
+            x_max[0] = ceil(x_max[0])
+        elif ceil(x_max[0]) == ceil(bounds[0][1]):
+            x_max[0] = floor(x_max[0])
+        print('X_MAX:', x_max)
+        solutions.append((max_acq, x_max))
+
+    sol_idx = np.argmax([x for x, y in solutions])
+    print('solution:', solutions[sol_idx])
+    return round(solutions[sol_idx][1][0])
     # Clip output to make sure it lies within the bounds. Due to floating
     # point technicalities this is not always the case.
-    return np.clip(x_max, bounds[:, 0], bounds[:, 1])
+    # return np.clip(x_max, bounds[:, 0], bounds[:, 1])
 
 
 class UtilityFunction(object):

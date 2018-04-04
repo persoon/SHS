@@ -7,7 +7,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import Matern
 from .helpers import (UtilityFunction, PrintLog, acq_max, ensure_rng)
 from .target_space import TargetSpace
-import Bound
+import src.Bound as Bound
 
 class BayesianOptimization(object):
 
@@ -84,8 +84,17 @@ class BayesianOptimization(object):
         rand_points = self.space.random_points(init_points)
 
         self.init_points.extend(rand_points)
-        self.init_points.extend([[self.pbounds['t'][0]]])
-        self.init_points.extend([[self.pbounds['t'][1]]])
+
+        low = []
+        high = []
+        for ti in self.pbounds['t']:
+            low.append(ti[0])
+            high.append(ti[1])
+        low = np.asarray(low)
+        high = np.asarray(high)
+
+        self.init_points.extend([low])
+        self.init_points.extend([high])
 
         # self.init_points = list(set(round(i) for i in self.init_points[0]))
 
@@ -107,6 +116,7 @@ class BayesianOptimization(object):
 
     def _observe_point(self, x):
         y = self.space.observe_point(x)
+        # print('observing point:', x, '\t\ty:', y)
         if self.verbose:
             self.plog.print_step(x, y)
         return y
@@ -257,9 +267,17 @@ class BayesianOptimization(object):
             self.init(init_points)
 
         point_bounds = []
-        LB, UB = self.space.bounds[0][0], self.space.bounds[0][1]
+
+        LB = []
+        UB = []
+        for i in range(len(self.space.bounds)):
+            LB.append(self.space.bounds[i][0])
+            UB.append(self.space.bounds[i][1])
+            point_bounds.append([])
+        # LB, UB = self.space.bounds[0][0], self.space.bounds[0][1]
         for point in self.init_points:
-            point_bounds = Bound.add_bound(LB, UB, point_bounds, point[0])
+            for var in range(len(point)):
+                point_bounds[var] = Bound.add_bound(LB[var], UB[var], point_bounds[var], point[var])
 
         y_max = self.space.Y.max()
 
@@ -278,7 +296,11 @@ class BayesianOptimization(object):
                         random_state=self.random_state,
                         **self._acqkw)
 
-        point_bounds = Bound.add_bound(LB, UB, point_bounds, round(x_max))
+        for var in range(len(x_max)):
+            point_bounds[var] = Bound.add_bound(LB[var], UB[var], point_bounds[var], round(x_max[var]))
+
+
+        # point_bounds = Bound.add_bound(LB, UB, point_bounds, round(x_max))
 
         # Print new header
         if self.verbose:
@@ -303,11 +325,12 @@ class BayesianOptimization(object):
             # Append most recently generated values to X and Y arrays
             y = self.space.observe_point(x_max)  # , noise_sd[i]) REMOVED BY BILL 3/19/2018
             pwarning = False
-            if self.verbose:
+            if True: # self.verbose == 1:
                 print('________________________________________')
-                print('Step  |   Time |   Value    |         t |')
-                self.plog.print_step([x_max], y, pwarning)
-                print('----------------------------------------|')
+                print('Step    |    Value    |        t        |')
+                # self.plog.print_step(x_max, y, pwarning)
+                print(str(i)+'.  |        ', y, ' |  ', x_max)
+                print('________________________________________|')
 
 
             # Updating the GP.
@@ -332,18 +355,25 @@ class BayesianOptimization(object):
                             **self._acqkw)
 
             # Sets up the bounds used to select points --- this section is because we need to choose integers
-            point_bounds = Bound.add_bound(LB, UB, point_bounds, round(x_max))
-
+            #for i in range(len(x_max)):
+                #x_max[i] = round(x_max[i])
+            #point_bounds = Bound.add_bound(LB, UB, point_bounds, x_max)
+            for var in range(len(x_max)):
+                point_bounds[var] = Bound.add_bound(LB[var], UB[var], point_bounds[var], round(x_max[var]))
             # Keep track of total number of iterations
             i += 1
 
         # Print a final report if verbose active.
-        if self.verbose:
-            print('=======================================')
-            print('SUMMARY:')
-            print('y_max:', y_max)
+        #if self.verbose:
+        '''
+        print('=======================================')
+        print('SUMMARY:')
+        print('y_max:', y_max)
+        print('x_max:', x_max)
+        self.plog.print_summary()
+        '''
 
-            self.plog.print_summary()
+
 
     def points_to_csv(self, file_name):
         """

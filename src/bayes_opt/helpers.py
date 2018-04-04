@@ -5,6 +5,7 @@ from datetime import datetime
 from scipy.stats import norm
 from scipy.optimize import minimize
 from math import floor, ceil
+from src.Selector import get_bounds
 
 
 def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100000, n_iter=250):
@@ -48,26 +49,48 @@ def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100
     -------
     :return: x_max, The arg max of the acquisition function.
     """
-    # TODO: make this pull from a list of all possible integers between bounds
 
     if point_bounds is None:
         point_bounds = []
+        for i in range(len(bounds)):
+            point_bounds.append([])
 
-    if len(point_bounds) == 0:
-        point_bounds.append((bounds[0][0], bounds[0][0]))
-        point_bounds.append((bounds[0][1], bounds[0][1]))
+    # todo: move these checks to Bound.py
+    for i in range(len(point_bounds)):
 
-    if point_bounds[0][0] != bounds[0][0]:
-        point_bounds.insert(0, (bounds[0][0], bounds[0][0]))
-    if point_bounds[len(point_bounds)-1][1] != bounds[0][1]:
-        point_bounds.insert(len(point_bounds), (bounds[0][1], bounds[0][1]))
+        if len(point_bounds[i]) == 0:
+            point_bounds[i].append((bounds[i][0], bounds[i][0]))
+            point_bounds[i].append((bounds[i][1], bounds[i][1]))
+
+        if point_bounds[i][0][0] != bounds[i][0]:
+            point_bounds[i].insert(0, (bounds[i][0], bounds[i][0]))
+        if point_bounds[i][len(point_bounds[i])-1][1] != bounds[i][1]:
+            point_bounds[i].insert(len(point_bounds[i]), (bounds[i][1], bounds[i][1]))
 
     solutions = []
-    print('POINTS:', point_bounds)
-    for i in range(len(point_bounds)-1):
+    #print('POINTS:', point_bounds)
+    # there's an issue with this...
+    # If we have multiple different bounds lists for each variable ---
+    #                               do we need to try this with every permutation of bounds?
+    # If we find a dependency issue (unsolvable schedule) I suppose we can add big chunks to bounds list,
+    #                                               but what about two devices that aren't dependant on each other?
 
-        bounds = np.array([[point_bounds[i][1], point_bounds[i+1][0]]], dtype=np.float)
-        print('BOUNDS:', bounds, end='\t')
+
+    # ANSWER:
+    # Only ask multiple questions when the devices have dependencies
+    # Otherwise ask a series of questions one at a time
+    # TODO: figure out how to ask only one change at a time
+    # TODO: write a pynb file
+    point_bounds = get_bounds(point_bounds)
+
+    # print('POINT BOUNDS', len(point_bounds))
+
+
+    # for i in range(len(point_bounds)-1):
+    for b in point_bounds:
+
+        bounds = np.array(b, dtype=np.float)
+        # print('BOUNDS:', bounds, end='\t')
         # Warm up with random points
         x_tries = random_state.uniform(bounds[:, 0], bounds[:, 1], size=(n_warmup, bounds.shape[0]))
         ys = ac(x_tries, gp=gp, y_max=y_max)
@@ -84,20 +107,22 @@ def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100
                            method="L-BFGS-B")
 
             # Store it if better than previous minimum(maximum).
-            if max_acq is None or -res.fun[0] >= max_acq:
+            if max_acq is None or -res.fun >= max_acq:
                 x_max = res.x
-                max_acq = -res.fun[0]
+                max_acq = -res.fun
 
-        if floor(x_max[0]) == floor(bounds[0][0]):
-            x_max[0] = ceil(x_max[0])
-        elif ceil(x_max[0]) == ceil(bounds[0][1]):
-            x_max[0] = floor(x_max[0])
-        print('X_MAX:', x_max)
+        for i in range(len(x_max)):
+            if floor(x_max[i]) == floor(bounds[i][0]):
+                x_max[i] = ceil(x_max[i])
+            elif ceil(x_max[i]) == ceil(bounds[i][1]):
+                x_max[i] = floor(x_max[i])
+        # print('X_MAX:', x_max)
         solutions.append((max_acq, x_max))
 
     sol_idx = np.argmax([x for x, y in solutions])
-    print('solution:', solutions[sol_idx])
-    return round(solutions[sol_idx][1][0])
+    # print('solution:', solutions[sol_idx])
+
+    return solutions[sol_idx][1]
     # Clip output to make sure it lies within the bounds. Due to floating
     # point technicalities this is not always the case.
     # return np.clip(x_max, bounds[:, 0], bounds[:, 1])

@@ -52,3 +52,14 @@ class Rule:
         s += str(self.goal) + '\t' + str(self.prefix) + '\t'
         s += str(self.time1) + '\t' + str(self.time2)
         return s
+
+    def print_rule(self):
+        time = -1
+        if self.prefix == 'before':
+            time = self.time2
+        elif self.prefix == 'after':
+            time = self.time1
+        else:
+            print('Have not set up this rule type for print_rule()!')
+
+        print(self.location + '  ' + self.sp + '  ' + str(self.prefix) + '  ' + str(time))

@@ -46,9 +46,18 @@ class TargetSpace(object):
         # Get the name of the parameters
         self.keys = list(pbounds.keys())
         # Create an array with parameters bounds
-        self.bounds = np.array(list(pbounds.values()), dtype=np.float)
+
+        # self.bounds = np.array(list(pbounds.values()), dtype=np.float)
+        _temp = list(pbounds.values())[0]
+        self.bounds = []
+        for b in _temp:
+            self.bounds.append([b[0], b[1]])
+
+        self.bounds = np.asarray(self.bounds)
+
         # Find number of parameters
-        self.dim = len(self.keys)
+        self.dim = len(pbounds[self.keys[0]])
+        # self.dim = len(self.keys)
 
         # preallocated memory for X and Y points
         self._Xarr = None
@@ -135,7 +144,7 @@ class TargetSpace(object):
             y = self._cache[_hashable(x)]
         else:
             # measure the target function
-            params = dict(zip(self.keys, x))
+            params = dict(zip(self.keys, [x]))
             y = self.target_func(**params)  # TODO: schedule_0 - (schedule_x - user_preference_x)
             self.add_observation(x, y)
         return y
@@ -247,7 +256,6 @@ class TargetSpace(object):
                [ 71.80374727,   0.4236548 ],
                [ 60.67357423,   0.64589411]])
         """
-        # TODO: support integer, category, and basic scipy.optimize constraints
         data = np.empty((num, self.dim))
         for col, (lower, upper) in enumerate(self.bounds):
             data.T[col] = self.random_state.uniform(lower, upper, size=num)

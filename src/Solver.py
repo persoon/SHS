@@ -103,6 +103,8 @@ class Solver:
 
         dcons = DCons.DeviceConstraints(model=self.model, params=self.params, devices=self.devices)
         rcons = RCons.RuleConstraints(model=self.model, mode_cons=dcons.mode_cons, rules=self.rules)
+        if rcons.check == -1:
+            return -1
         self.rule_pref = rcons.rule_pref
 
         self.model.variables.add(
@@ -169,16 +171,19 @@ class Solver:
         for t in range(self.horizon):
             quad.append([[len(quad)], [1.0]])  # [price[t]]])
 
+        return 1
         # self.model.objective.set_quadratic(quad)  # <---- add power objective
         # self.model.write('problem.lp')
 
     def solve(self):
+
         self.model.solve()
 
         solution = self.model.solution
 
         # print("Solution status: ", solution.get_status())
         # print("Objective value: ", solution.get_objective_value())
+
         ''' print device kWh:
         for d in range(len(self.vars[0])):
             print(self.vars[0][d].split("_")[0])
@@ -186,12 +191,14 @@ class Solver:
                 print(round(solution.get_values(self.vars[t][d]), 2), end="\t")
             print()
         '''
+
         '''
         print('================= Indoor Temperature ==================')
         for i in range(self.horizon):
             print(round(solution.get_values('T_z' + str(i)), 1), end="  ")
         print()
         '''
+
         '''
         print('++++++++++++++++++++++ Schedule ++++++++++++++++++++++')
         for t in range(self.horizon):
@@ -211,8 +218,8 @@ class Solver:
     def dependancy(self, device1, device2):
         d1pn = device1.phases[len(device1.phases)-1]
         d2p1 = device2.phases[0]
-        print(d1pn)
-        print(d2p1)
+        # print(d1pn)
+        # print(d2p1)
         self.model.linear_constraints.add(
             lin_expr=[cplex.SparsePair(ind=[d2p1[2], d1pn[2]], val=[1.0, -1.0])],
             senses=['G'],

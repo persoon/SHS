@@ -3,47 +3,100 @@ import src.Reader
 import src.Solver as Solver
 import src.Utilities as util
 from src.gauss import UserExpectation as user
+import Expectation as expectation
 from src.bayes_opt.bayesian_optimization import BayesianOptimization as bayesian
 
 
 params = src.Parameters.Parameters()
 
 horizon = params.horizon
-rt2_1 = params.rules[0].time2
-rt2_2 = params.rules[1].time2
-pbounds = {'t': (rt2_1, horizon-1)}  # , 't2': (rt2_2, horizon-1)}
+# todo: handle 'within', 'at' rules
+t_vals = []
+for r in params.rules:
+    print(r.time1, r.time2)
+    if r.time1 == 0:  # before
+        t_vals.append((r.time2, horizon-1))
+    elif r.time2 == horizon:  # after
+        t_vals.append((0, r.time1))
+    else:
+        print('ERROR: unhandled rule:')
+        print(r.to_string())
+pbounds = {'t': t_vals}  # , 't2': (rt2_2, horizon-1)}
 print(pbounds)
 solver = Solver.Solver(params=params)
-usr = user(rt2_1, horizon-1, rt2_2, horizon-1)
 
 
-def target_function(t):  # , t2):
-    params.rules[0].time2 = int(t)  # Todo: figure out how to make t always try integers
-    solver.reset(params=params)
+rt1_1 = 0
+rt1_2 = 0
+rt2_1 = 0
+rt2_2 = 0
+if params.rules[0].time1 == 0:  # before
+    rt1_1 = params.rules[0].time2
+    rt1_2 = horizon - 1
+elif params.rules[0].time2 == horizon:  # after
+    rt1_1 = 0
+    rt1_2 = params.rules[0].time1
+
+if params.rules[1].time1 == 0:  # before
+    rt2_1 = params.rules[1].time2
+    rt2_2 = horizon - 1
+elif params.rules[1].time2 == horizon:  # after
+    rt2_1 = 0
+    rt2_2 = params.rules[1].time1
+usr = user(rt1_1, rt1_2, rt2_1, rt2_2)
+
+expect_vals = [[0, 600], [0, 1600]] # <--- these change based on devices in system
+expect = expectation.Expectation(bounds=t_vals, expect=expect_vals)
+
+def target_function(t):
+    t = t.astype(int)
+    for i in range(len(t)):
+        if t[i] < params.rules[i].time1:
+            params.rules[i].time1 = t[i]
+        else:
+            params.rules[i].time2 = t[i]
+        # print(params.rules[i].to_string())
+    check = solver.reset(params=params)
+    if check == -1:
+        return -32768  # return a large negative number if rules inconsistent
+
+    solver.dependancy(params.devices[0], params.devices[1])
     solution = solver.solve()
-    return round(usr.getValue(x=int(t)) - solution.get_values('objPrice'), 2) + 690
+
+    if params.verbose:
+        print('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+')
+        print('SOLUTION STATUS:', solution.get_status())
+        print('objPrice Value:', solution.get_values('objPrice'))
+        print('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+')
+
+    if solution.get_status() != 103:  # if solution status is 101, optimal solution found --- 103 means infeasible (hoping this works -- will require more experimentation)
+        return round(expect.get_value(t) - solution.get_values('objPrice') + params.reg_price, 2)
+    else:
+        return -32768  # return a large negative number if solution is infeasible
 
 
 def execute():
     dictionary = src.Reader.Reader().get_dictionary()
     devices = [
         dictionary.get_device(device_type='washer', device_name='GE_WSM2420D3WW', mode_name="regular_w", dID=0),
-        #dictionary.get_device(device_type= 'dryer', device_name='GE_WSM2420D3WW', mode_name="regular_d", dID=0)
+        dictionary.get_device(device_type= 'dryer', device_name='GE_WSM2420D3WW', mode_name="regular_d", dID=1)
     ]
 
-    # NOTE:2430 for dryer 243 for low end
+    # NOTE:
     # dryer values: time# 88 = 2430
     #               time#191 =  243
     params.devices = devices
     solver.reset(params=params)
-    #solver.dependancy(devices[0], devices[1])
+    solver.dependancy(devices[0], devices[1])
     solution = solver.solve()
 
     reg_price = round(solution.get_values('objPrice'), 2)
+    params.reg_price = reg_price
+
 
     pref_price = [reg_price]
     rule = params.rules[0]
-    print(params.rules[0].time2, ':', reg_price)
+    print('Price w/o changes:', reg_price)
     #print(solution.get_values('d0_p2'))
     #print(solution.get_values('d1_p0'))
     print_info(solution, devices)
@@ -55,7 +108,7 @@ def execute():
     Xdata = []
 
     # rule, horizon
-    bay = bayesian(f=target_function, pbounds=pbounds)
+    bay = bayesian(f=target_function, pbounds=pbounds, verbose=0)
     bay.maximize()
     '''
     for t in range(num_tries):
@@ -119,95 +172,3 @@ def print_info(solution, devices=None, rule_pref=None):
     for s in range(len(rule_pref)):
         print('Solution ' + str(rule_pref[s][0]) + '_t' + str(rule_pref[s][2]) + ':',
               round(solution.get_values('d0_t' + str(rule_pref[s][2])), 2))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# generates devices
-# does not add device variables, make sure to add those
-# inputs:
-#   type -- determines which devices to generate
-#       'mix' : makes a perfect mix, one of each device type created so far -- then repeats
-#       'random' : generates random devices
-#       dtype (e.g. 'washer'): to generate a number of that type of device
-#       default: 'random'
-#   num_devs -- determines number of devices to generate
-#       default: 4
-#   OPTIONAL::model -- this is here for when I add more than one model of any type of device
-def generate_devices(type='random', num_devs=4, model='random'):
-    dictionary = src.Reader.Reader().get_dictionary()
-    devices = []
-
-    if type == 'random':
-        for i in range(num_devs):
-            devices.append(dictionary.get_device(dID=i))
-    elif type == 'mix':
-        for i in range(num_devs):
-            if i % 4 == 0:
-                devices.append(dictionary.get_device(dtype='washer', dID=i))
-            elif i % 4 == 1:
-                devices.append(dictionary.get_device(dtype='dryer', dID=i))
-            elif i % 4 == 2:
-                devices.append(dictionary.get_device(dtype='oven', dID=i))
-            elif i % 4 == 3:
-                devices.append(dictionary.get_device(dtype='dishwasher', dID=i))
-    else:
-        for i in range(num_devs):
-            devices.append(dictionary.get_device(dtype=type, device_name=model, dID=i))
-    return devices
-
-
-def generate_rule(device):
-    sp = {
-        'washer'     : 'wash',
-        'dryer'      : 'dry',
-        'oven'       : 'bake',
-        'dishwasher': 'dish_wash'  # might change this one later
-    }[device.dtype]
-
-    predicate = 'E'# random.choice(['L', 'E', 'G']) # <=, ==, >=
-    prefix = random.choice(['before'])#, 'after'])  # todo: confirm at and within work properly 9_18_2017
-    time1 = -1
-    # todo: refine these to fit full possible range && add 'at' and 'within' 9_18_2017
-    if prefix == 'after':
-        time1 = random.randint(0, params.horizon-device.duration-1)
-    elif prefix == 'before':
-        time1 = random.randint(device.duration+1, params.horizon-1)
-    else:
-        print('Need to setup \'within\'/\'at\' inside generate_rule in Controller.py before using')
-        exit(-1)
-    # todo: figure out this location mess, right now all devices coincidentally are their loc 9_18_2017
-    return R.Rule(
-        loc=device.device_name,
-        sp=sp,
-        predicate=predicate,
-        prefix=prefix,
-        time1=time1,
-        horizon=params.horizon
-    )
-

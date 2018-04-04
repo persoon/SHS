@@ -1,3 +1,3 @@
 24
 1	1	d:GE_WSM2420D3WW	regular_w	-	-	before	11
-1	1	d:GE_WSM2420D3WW	regular_d	-	-	before	11
+1	1	d:GE_WSM2420D3WW	regular_d	-	-	before	8

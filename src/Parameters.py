@@ -5,7 +5,8 @@ import src.RuleParser as rp
 
 
 class Parameters:
-    horizon = 192
+    verbose = 0        # set this to 1 if you want to see some extra information from solver and other places
+    horizon = 24
     htype = 1          # house type
     city = 'houston'   # city name
     season = 'summer'  # season
@@ -38,6 +39,9 @@ class Parameters:
          8,  8,  6,  6,  4,  2
     ]
 
+    # have to figure out the price if hard constraints are kept and set this value to it
+    reg_price = 0
+
     '''
     old_ps = [
         0.198, 0.849, 0.849, 0.198, 0.849, 0.198, 0.849, 0.198,
@@ -56,19 +60,18 @@ class Parameters:
     """
     __we_are_one = {}
 
-    # todo: remove need for 'Borg' because 'Borg' pattern causes all these things to initialize over and over
-    def __init__(self):
+    def __init__(self, fname='../resources/input/rules.txt'):
         self.__dict__ = self.__we_are_one
         if not self.hasSetup:
-            self.setup()
+            self.setup(fname)
             self.hasSetup = True
 
-    def setup(self):
+    def setup(self, fname):
         rule_parser = rp.RuleParser()
-        import os
-        cwd = os.getcwd()
-        print(cwd)
-        self.rules, file_horizon = rule_parser.parse_rules('../resources/input/rules.txt')
+        #import os
+        #cwd = os.getcwd()
+        #print(cwd)
+        self.rules, file_horizon = rule_parser.parse_rules(fname)
         self.rules[0].to_string()
         # Converts the rules and price schema to the horizon set in parameters
         self.scale_factor = int(self.horizon / file_horizon)
@@ -83,7 +86,6 @@ class Parameters:
             self.rules[r].time2 *= self.scale_factor
 
     # converts the temperature, dewpoint, solar radiation, and price_schema to horizon time steps (expands from 24).
-    # TODO: make a function for reducing number of time steps (i.e. from 24 to 12)
     def convert_arrays(self):
         old_temp = self.out_temp
         old_dp = self.dp

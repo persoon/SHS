@@ -16,9 +16,9 @@ class UserExpectation:
         #for i in range(len(knowledge)):
         #    knowledge[i][0] = int(knowledge[i][0] * dist)
 
-        print(start, end, end-start)
-        print(dist)
-        print(knowledge)
+        # print(start, end, end-start)
+        # print(dist)
+        # print(knowledge)
 
         k_nd = np.linspace(float(knowledge[0]), float(knowledge[1]), num=int(dist))
         for i in range(len(knowledge)-2):
@@ -46,9 +46,9 @@ class UserExpectation:
         # for i in range(len(knowledge)):
         #    knowledge[i][0] = int(knowledge[i][0] * dist)
 
-        print(start2, end2, end2 - start2)
-        print(dist2)
-        print(knowledge2)
+        # print(start2, end2, end2 - start2)
+        # print(dist2)
+        # print(knowledge2)
 
         k_nd2 = np.linspace(float(knowledge2[0]), float(knowledge2[1]), num=int(dist2))
         for i in range(len(knowledge2) - 2):
@@ -64,11 +64,11 @@ class UserExpectation:
 
 
     def getValue(self, x):
-        print(x, self.support[0])
+        # print(x, self.support[0])
         return self.blackbox[x-self.support[0]]
 
     def getValue2(self, x):
-        print(x, self.support[0])
+        # print(x, self.support[0])
         return self.blackbox2[x-self.support2[0]]
 
     # hehe.

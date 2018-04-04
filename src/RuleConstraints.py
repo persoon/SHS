@@ -11,6 +11,7 @@ class RuleConstraints:
         self.rules = rules
         self.mode_cons = mode_cons
         self.rule_pref = []
+        self.check = 1  # returns 1 if rules are legal, -1 if error occurred
         # all rules are located in a room or a device
         # splits rules into the two groups and removes identifier
         # TODO: make the removal of identifier happen in Rule.py and have r_type (or loc_type) identify
@@ -40,8 +41,12 @@ class RuleConstraints:
                         used.append(dev)
 
                     # normal rule constraint
-                    mode_cons[i][1].add_rule_constraints(r)
-
+                    if self.check == 1:
+                        if mode_cons[i][1].add_rule_constraints(r) == -1:
+                            self.check = -1
+                            break
+                    elif self.check == -1:
+                        break
                     # Nando ---- look at this ################################################
                     '''
                     r.time2 += 1  # because rules.txt has 'wash before 16', this tests 'before 17'

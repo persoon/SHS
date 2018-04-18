@@ -4,6 +4,7 @@
 # Attaches devices to various state property models (e.g. HVAC, solar)
 import src.HVAC
 
+
 # todo: make the rules sort themselves into locations, then apply the properties and whatnot like below:
 class RuleConstraints:
     def __init__(self, model, mode_cons, rules):
@@ -12,6 +13,7 @@ class RuleConstraints:
         self.mode_cons = mode_cons
         self.rule_pref = []
         self.check = 1  # returns 1 if rules are legal, -1 if error occurred
+        self.dr_link = []  # Device/rule link
         # all rules are located in a room or a device
         # splits rules into the two groups and removes identifier
         # TODO: make the removal of identifier happen in Rule.py and have r_type (or loc_type) identify
@@ -35,6 +37,7 @@ class RuleConstraints:
                 dev = mode_cons[i][0]
                 dname = dev.device_name
                 if dname == r.location:
+                    self.dr_link.append((dev, r))
                     name = dev.name
                     # if device is used, add to list of used once so it can be added to state prop models later
                     if dev not in used:
@@ -47,7 +50,7 @@ class RuleConstraints:
                             break
                     elif self.check == -1:
                         break
-                    # Nando ---- look at this ################################################
+                    ##########################################################################
                     '''
                     r.time2 += 1  # because rules.txt has 'wash before 16', this tests 'before 17'
                     mode_cons[i][1].add_rule_pref(r)
@@ -82,7 +85,7 @@ class RuleConstraints:
                     devices.append(d)
 
             devices.extend(used)
-            # TODO: initialized hvac in all applicable rooms 2/2/2018
+            # TODO: initialize hvac in all applicable rooms 2/2/2018
             hvac = src.HVAC.HVAC(model=self.model, rname='room', devices=devices)
 
             for r in hrules:

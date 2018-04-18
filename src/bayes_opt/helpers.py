@@ -75,57 +75,62 @@ def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100
     # If we find a dependency issue (unsolvable schedule) I suppose we can add big chunks to bounds list,
     #                                               but what about two devices that aren't dependant on each other?
 
-
     # ANSWER:
     # Only ask multiple questions when the devices have dependencies
     # Otherwise ask a series of questions one at a time
+    # TODO: implement multiple bounds lists
     # TODO: figure out how to ask only one change at a time
     # TODO: write a pynb file
     point_bounds = get_bounds(point_bounds)
 
-    # print('POINT BOUNDS', len(point_bounds))
+    p_x, p_mean, p_std = [], [], []
 
-
-    # for i in range(len(point_bounds)-1):
     for b in point_bounds:
 
         bounds = np.array(b, dtype=np.float)
-        # print('BOUNDS:', bounds, end='\t')
+
         # Warm up with random points
         x_tries = random_state.uniform(bounds[:, 0], bounds[:, 1], size=(n_warmup, bounds.shape[0]))
-        ys = ac(x_tries, gp=gp, y_max=y_max)
+        ys, mean, std = ac(x_tries, gp=gp, y_max=y_max)
+
         x_max = x_tries[ys.argmax()]
         max_acq = ys.max()
 
         # Explore the parameter space more thoroughly
-        x_seeds = random_state.uniform(bounds[:, 0], bounds[:, 1], size=(n_iter, bounds.shape[0]))
-        for x_try in x_seeds:
+        x_seeds = random_state.randint(bounds[:, 0], bounds[:, 1], size=(n_iter, bounds.shape[0]))
+        #print('number of x_seeds:', len(np.unique(x_seeds)))
+        for x_try in np.unique(x_seeds):
+            #print('x_try:', x_try)
             # Find the minimum of minus the acquisition function
-            res = minimize(lambda x: -ac(x.reshape(1, -1), gp=gp, y_max=y_max),
+            res = minimize(lambda x: -ac(x.reshape(1, -1), gp=gp, y_max=y_max)[0],
                            x_try.reshape(1, -1),
                            bounds=bounds,
                            method="L-BFGS-B")
 
+            val, mean, std = ac(res.x.reshape(1, -1), gp=gp, y_max=y_max)  # need these to see confidence interval
+            p_x.append(x_try), p_mean.append(mean), p_std.append(std)
             # Store it if better than previous minimum(maximum).
-            if max_acq is None or -res.fun >= max_acq:
+            res.fun[0] = round(res.fun[0], 1)
+            if max_acq is None or -res.fun > max_acq:
+                #if max_acq is not None:
+                    #print('y_max:', y_max)
+                    #print('x_max:', x_max, '->', res.x)
+                    #print('max_acq:', max_acq, '->', -res.fun)
                 x_max = res.x
                 max_acq = -res.fun
+
 
         for i in range(len(x_max)):
             if floor(x_max[i]) == floor(bounds[i][0]):
                 x_max[i] = ceil(x_max[i])
             elif ceil(x_max[i]) == ceil(bounds[i][1]):
                 x_max[i] = floor(x_max[i])
-        # print('X_MAX:', x_max)
-        solutions.append((max_acq, x_max))
 
-    sol_idx = np.argmax([x for x, y in solutions])
-    # print('solution:', solutions[sol_idx])
+        solutions.append((max_acq, x_max, p_x, p_mean, p_std))
 
-    return solutions[sol_idx][1]
-    # Clip output to make sure it lies within the bounds. Due to floating
-    # point technicalities this is not always the case.
-    # return np.clip(x_max, bounds[:, 0], bounds[:, 1])
+    sol_idx = np.argmax([x for x, y, z1, z2, z3 in solutions])
+
+    return solutions[sol_idx]
 
 
 class UtilityFunction(object):
@@ -151,7 +156,9 @@ class UtilityFunction(object):
 
     def utility(self, x, gp, y_max):
         if self.kind == 'ucb':
-            return self._ucb(x, gp, self.kappa)
+            val, mean, std = self._ucb(x, gp, self.kappa)
+            #print('MEAN:', mean, 'STD:', std)
+            return val, mean, std
         if self.kind == 'ei':
             return self._ei(x, gp, y_max, self.xi)
         if self.kind == 'poi':
@@ -160,7 +167,7 @@ class UtilityFunction(object):
     @staticmethod
     def _ucb(x, gp, kappa):
         mean, std = gp.predict(x, return_std=True)
-        return mean + kappa * std
+        return mean + kappa * std, mean, std
 
     @staticmethod
     def _ei(x, gp, y_max, xi):

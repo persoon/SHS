@@ -3,9 +3,9 @@ import src.Reader
 import src.Solver as Solver
 import src.Utilities as util
 from src.gauss import UserExpectation as user
-import Expectation as expectation
+import src.Expectation as expectation
 from src.bayes_opt.bayesian_optimization import BayesianOptimization as bayesian
-
+import src.LineGraph as graph
 
 params = src.Parameters.Parameters()
 
@@ -22,10 +22,10 @@ for r in params.rules:
         print('ERROR: unhandled rule:')
         print(r.to_string())
 pbounds = {'t': t_vals}  # , 't2': (rt2_2, horizon-1)}
-print(pbounds)
+# print(pbounds)
 solver = Solver.Solver(params=params)
 
-
+'''
 rt1_1 = 0
 rt1_2 = 0
 rt2_1 = 0
@@ -44,9 +44,10 @@ elif params.rules[1].time2 == horizon:  # after
     rt2_1 = 0
     rt2_2 = params.rules[1].time1
 usr = user(rt1_1, rt1_2, rt2_1, rt2_2)
-
-expect_vals = [[0, 600], [0, 1600]] # <--- these change based on devices in system
+'''
+expect_vals = [[0, 600]]#, [0, 1600]] # <--- these change based on devices in system
 expect = expectation.Expectation(bounds=t_vals, expect=expect_vals)
+# expect.show_graphs()
 
 def target_function(t):
     t = t.astype(int)
@@ -60,7 +61,7 @@ def target_function(t):
     if check == -1:
         return -32768  # return a large negative number if rules inconsistent
 
-    solver.dependancy(params.devices[0], params.devices[1])
+    #solver.dependancy(params.devices[0], params.devices[1])
     solution = solver.solve()
 
     if params.verbose:
@@ -70,16 +71,28 @@ def target_function(t):
         print('=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+')
 
     if solution.get_status() != 103:  # if solution status is 101, optimal solution found --- 103 means infeasible (hoping this works -- will require more experimentation)
+        #expect.show_ucb()
+        #if expect.get_value(t) == 0:
+        #    print('THE VALUE WHEN EXPECTATION WAS 0:', round(expect.get_value(t) - solution.get_values('objPrice') + params.reg_price, 2))
         return round(expect.get_value(t) - solution.get_values('objPrice') + params.reg_price, 2)
     else:
         return -32768  # return a large negative number if solution is infeasible
+
+
+
+
+
+
+
+
+
 
 
 def execute():
     dictionary = src.Reader.Reader().get_dictionary()
     devices = [
         dictionary.get_device(device_type='washer', device_name='GE_WSM2420D3WW', mode_name="regular_w", dID=0),
-        dictionary.get_device(device_type= 'dryer', device_name='GE_WSM2420D3WW', mode_name="regular_d", dID=1)
+        #dictionary.get_device(device_type= 'dryer', device_name='GE_WSM2420D3WW', mode_name="regular_d", dID=1)
     ]
 
     # NOTE:
@@ -87,7 +100,7 @@ def execute():
     #               time#191 =  243
     params.devices = devices
     solver.reset(params=params)
-    solver.dependancy(devices[0], devices[1])
+    #solver.dependancy(devices[0], devices[1])
     solution = solver.solve()
 
     reg_price = round(solution.get_values('objPrice'), 2)
@@ -96,20 +109,32 @@ def execute():
 
     pref_price = [reg_price]
     rule = params.rules[0]
-    print('Price w/o changes:', reg_price)
-    #print(solution.get_values('d0_p2'))
-    #print(solution.get_values('d1_p0'))
-    print_info(solution, devices)
-    span = params.horizon - (rt2_1+1)
-    freq = 25  # distance between samples
+    #print('Price w/o changes:', reg_price)
+    #print_info(solution, devices)
 
-    num_tries = int(span/freq)
-    Ydata = []
-    Xdata = []
 
     # rule, horizon
     bay = bayesian(f=target_function, pbounds=pbounds, verbose=0)
-    bay.maximize()
+    p_x, p_mean, p_std = bay.maximize()
+    return expect, p_x, p_mean, p_std
+
+    line_graph = graph.LineGraph(expect.bounds[0])
+    #line_graph.add_expectation(expect.kline[0])
+    line_graph.add_confidence_interval(2.53*100, p_mean, p_std, p_x)
+    expect.show_ucb()
+    line_graph.show_graph()
+
+
+
+
+
+
+    #span = params.horizon - (rt2_1+1)
+    #freq = 25  # distance between samples
+
+    #num_tries = int(span/freq)
+    #Ydata = []
+    #Xdata = []
     '''
     for t in range(num_tries):
         _time = rt2 + ((t+1) * freq)

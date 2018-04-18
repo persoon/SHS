@@ -6,11 +6,12 @@ import src.RuleParser as rp
 
 class Parameters:
     verbose = 0        # set this to 1 if you want to see some extra information from solver and other places
-    horizon = 24
+    horizon = 192
     htype = 1          # house type
     city = 'houston'   # city name
     season = 'summer'  # season
     devices = []
+    device_dependencies = []
     # TODO: make these location / season dependant --- they can be loaded in from elsewhere into parameters
     # outdoor temperature:
     out_temp = [77.0, 77.0, 77.0, 77.0, 75.2, 74.8, 75.6, 77.0, 82.4, 84.2, 86.0, 86.0, 89.6, 91.4, 93.2, 91.4, 89.6,
@@ -37,6 +38,13 @@ class Parameters:
         25, 25, 22, 22, 20, 20,
         16, 16, 12, 12, 10,  8,
          8,  8,  6,  6,  4,  2
+    ]
+
+    price_schema = [
+         4,  4,  6,  6,  8,  8,
+        10, 10, 12, 12, 14, 14,
+        14, 14, 20, 12, 10, 16,
+         8, 10,  6, 10,  4, 18
     ]
 
     # have to figure out the price if hard constraints are kept and set this value to it

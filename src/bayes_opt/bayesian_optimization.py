@@ -208,7 +208,7 @@ class BayesianOptimization(object):
 
     def maximize(self,
                  init_points=5,
-                 n_iter=25,
+                 n_iter=5,
                  acq='ucb',
                  kappa=2.576,
                  xi=0.0,
@@ -286,15 +286,17 @@ class BayesianOptimization(object):
 
         # Find unique rows of X to avoid GP from breaking
         self.gp.fit(self.space.X, self.space.Y)
-
+        # mean, std = self.gp.predict(x, return_std=True)
         # Finding argmax of the acquisition function.
-        x_max = acq_max(ac=self.util.utility,
-                        gp=self.gp,
-                        y_max=y_max,
-                        bounds=self.space.bounds,
-                        point_bounds=point_bounds,
-                        random_state=self.random_state,
-                        **self._acqkw)
+        _, x_max, p_x, p_mean, p_std = acq_max(ac=self.util.utility,
+                                        gp=self.gp,
+                                        y_max=y_max,
+                                        bounds=self.space.bounds,
+                                        point_bounds=point_bounds,
+                                        random_state=self.random_state,
+                                        **self._acqkw)
+
+        #print('x_max:', x_max, 'mean:', mean, 'std:', std)
 
         for var in range(len(x_max)):
             point_bounds[var] = Bound.add_bound(LB[var], UB[var], point_bounds[var], round(x_max[var]))
@@ -311,27 +313,21 @@ class BayesianOptimization(object):
         # of the target function is found and passed to the acq_max function.
         # The arg_max of the acquisition function is found and this will be
         # the next probed value of the target function in the next round.
+        tried_points = []
+        p_x    = []  # observed point x
+        p_y    = []  #    "       "   y
+        p_mean = []  #    "       "   mean
+        p_std  = []  #    "       "   std
         for i in range(n_iter):
 
-            # SHOULDNT NEED THIS:
-            '''
-            # Test if x_max is repeated, if it is, draw another one at random
-            # If it is repeated, print a warning
-            pwarning = False
-            while x_max in self.space:
-                x_max = self.space.random_points(1)[0]
-                pwarning = True
-            '''
             # Append most recently generated values to X and Y arrays
             y = self.space.observe_point(x_max)  # , noise_sd[i]) REMOVED BY BILL 3/19/2018
-            pwarning = False
-            if True: # self.verbose == 1:
+
+            if True:
                 print('________________________________________')
                 print('Step    |    Value    |        t        |')
-                # self.plog.print_step(x_max, y, pwarning)
                 print(str(i)+'.  |        ', y, ' |  ', x_max)
                 print('________________________________________|')
-
 
             # Updating the GP.
             self.gp.fit(self.space.X, self.space.Y)
@@ -346,13 +342,15 @@ class BayesianOptimization(object):
                 y_max = self.space.Y[-1]
 
             # Maximize acquisition function to find next probing point
-            x_max = acq_max(ac=self.util.utility,
-                            gp=self.gp,
-                            y_max=y_max,
-                            bounds=self.space.bounds,
-                            point_bounds=point_bounds,
-                            random_state=self.random_state,
-                            **self._acqkw)
+            _, x_max, p_x, p_mean, p_std = acq_max(ac=self.util.utility,
+                                            gp=self.gp,
+                                            y_max=y_max,
+                                            bounds=self.space.bounds,
+                                            point_bounds=point_bounds,
+                                            random_state=self.random_state,
+                                            **self._acqkw)
+
+            # print('x_max:', x_max, 'mean:', mean, 'std:', std)
 
             # Sets up the bounds used to select points --- this section is because we need to choose integers
             #for i in range(len(x_max)):
@@ -363,15 +361,11 @@ class BayesianOptimization(object):
             # Keep track of total number of iterations
             i += 1
 
-        # Print a final report if verbose active.
-        #if self.verbose:
-        '''
-        print('=======================================')
-        print('SUMMARY:')
-        print('y_max:', y_max)
-        print('x_max:', x_max)
-        self.plog.print_summary()
-        '''
+        #print(p_x)
+        #print(p_mean)
+        #print(p_std)
+
+        return p_x, p_mean, p_std
 
 
 

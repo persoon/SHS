@@ -86,7 +86,7 @@ class UserExpectation:
         plt.axis([self.support2[0], self.support2[1], 0, 591])
         plt.show()
 
-    '''
+    '''BELOW WAS COMMENTED'''
     def kernel(self, x, y, sigma):
         sqdist = np.sum(x ** 2, 1).reshape(-1, 1) + np.sum(y ** 2, 1) - 2 * np.dot(x, y.T)
         return np.exp(-0.5 * 1 / sigma * sqdist)
@@ -151,4 +151,4 @@ class UserExpectation:
         plt.plot(Xtest, mu, 'r--', lw=3)
         plt.axis([self.support[0], self.support[1], -500, 500])
         plt.show()
-    '''
+    '''ABOVE WAS COMMENTED'''

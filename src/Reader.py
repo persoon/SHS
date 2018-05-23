@@ -4,7 +4,7 @@ import src.Dictionary
 
 
 class Reader:
-    def __init__(self, fname='resources/input'):#'../resources/input'):
+    def __init__(self, fname='../resources/input'):#'resources/input'):#'../resources/input'):
         with open(fname + '/devices.json') as device_file:
             devices = json.load(device_file)
 

@@ -17,9 +17,10 @@ class RuleConstraints:
         # all rules are located in a room or a device
         # splits rules into the two groups and removes identifier
         # TODO: make the removal of identifier happen in Rule.py and have r_type (or loc_type) identify
-        drules = []
-        used = []
-        rrules = []
+        rrules = []  # room rules
+        drules = []  # device rules
+        used = []  # rules that are used
+
         for r in rules:
             if ':' in r.location:
                 loc = r.location.split(":")
@@ -70,15 +71,15 @@ class RuleConstraints:
                     del mode_cons[i]
                     break
 
-        hrules = []
+        hrules = []  # HVAC rules
         for r in rrules:
             if r.sp == 'air_temp':
                 hrules.append(r)
 
-        if len(hrules) > 0: # at least one hvac related rule
+        if len(hrules) > 0: # at least one HVAC related rule
             devices = []
             # find all active devices that affect air_temp
-            # for d in used: # for now, using the 2-lines below because hvac isn't in used list...
+            # for d in used: # for now, using the 2-lines below because HVAC isn't in used list...
             for i in range(len(mode_cons)):
                 d = mode_cons[i][0]
                 if d.mode_type == 'HVAC':

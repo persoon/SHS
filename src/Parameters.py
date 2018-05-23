@@ -23,6 +23,7 @@ class Parameters:
     dni = [0, 0, 0, 0, 0, 0, 7, 218, 260, 467, 448, 103, 83, 53, 1, 380, 501, 277, 113, 0, 0, 0, 0, 0]
 
     # real time-of-use price schema from California
+    '''
     price_schema = [
         0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198, 0.198,
         0.225, 0.225, 0.225, 0.225,
@@ -31,6 +32,7 @@ class Parameters:
         0.225, 0.225, 0.225, 0.225,
         0.198, 0.198
     ]
+    '''
 
     # goofy price schema which monotonically decreases so I can see that things are working
     price_schema = [
@@ -40,13 +42,14 @@ class Parameters:
          8,  8,  6,  6,  4,  2
     ]
 
+    '''
     price_schema = [
          4,  4,  6,  6,  8,  8,
         10, 10, 12, 12, 14, 14,
         14, 14, 20, 12, 10, 16,
          8, 10,  6, 10,  4, 18
     ]
-
+    '''
     # have to figure out the price if hard constraints are kept and set this value to it
     reg_price = 0
 
@@ -60,6 +63,23 @@ class Parameters:
         0.198, 0.198
     ]
     '''
+
+    # The initial points selected by the bayesian optimization. If this is None, it goes with it's regular input
+    initial_points = None
+    # Restricted regions for bayesian optimization
+    restricted = []
+    user_score = None
+    # the list of all possible points (black box values)
+    x = None
+    y = None
+    # maximum and minimum y values found from black box (or oracle) by testing all possible points
+    max_y = None
+    min_y = None
+    y_ind = -1
+    scale = False  # temporary solution for target function to only scale when I want it to
+
+    # if true, plots solution so you can see a visual representation of what's happening
+    plot_solution = False
 
     hasSetup = False
 
@@ -86,7 +106,6 @@ class Parameters:
         self.convert_arrays()
         self.convert_rules()
 
-
     # converts rules to the appropriate times based on scale_factor
     def convert_rules(self):
         for r in range(len(self.rules)):
@@ -112,12 +131,13 @@ class Parameters:
                 self.dni.append(old_dni[k])
                 self.price_schema.append(old_ps[k])
 
+    # A complete list of all values of x and y
+    def set_blackbox(self, x, y):
+        self.x = x
+        self.y = y
 
-
-    # applies rules with rooms as locations to model
-    def apply_room_rules(self):
-        blah = 1
-
-
-    #def reset_solver(self):
-    #    self.model = cplex.Cplex()
+    def get_blackbox(self):
+        if self.x is None:
+            return 0, 0
+        else:
+            return self.x, self.y

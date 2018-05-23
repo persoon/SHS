@@ -45,7 +45,7 @@ class DeviceConstraints:
             names=[name + '_' + str(k) for k in range(self.horizon)],
             types=[self.model.variables.type.continuous] * self.horizon,
             lb=[0.0] * self.horizon,
-            ub=[max_kWh * 1.05] * self.horizon
+            ub=[max_kWh * 1.05] * self.horizon  # have to make the upper bounds slightly higher (float inaccuracies)
             # obj=params.price_schema
         )
 

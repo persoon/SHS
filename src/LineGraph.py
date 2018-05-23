@@ -39,7 +39,8 @@ class LineGraph:
         #print(len(Xtest))
         #print(len(mu))
         #print(len(stdv))
-
+        fig1 = plt.figure(1)
+        ax1 = fig1.add_subplot(111)
         y1 = []
         y2 = []
         print('----------------------------')
@@ -51,8 +52,12 @@ class LineGraph:
         ay2 = np.asarray(y2)
         aXtest = np.asarray(Xtest)
         #print(aXtest.shape, ay1.shape, ay2.shape)
-        plt.gca().fill_between(aXtest.flatten(), ay1.flatten(), ay2.flatten(), color="#dddddd")
-        plt.plot(aXtest, mu)
+        fig1.gca().fill_between(aXtest.flatten(), ay1.flatten(), ay2.flatten(), color="#dddddd")
+        ax1.plot(aXtest, mu)
+        fig2 = plt.figure(2)
+        ax2 = fig2.add_subplot(111)
+        ax2.plot(aXtest, ay2)
+
 
 
 

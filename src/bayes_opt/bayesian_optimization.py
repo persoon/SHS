@@ -1,6 +1,7 @@
 from __future__ import print_function
 from __future__ import division
-
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
 import numpy as np
 import warnings
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -8,6 +9,9 @@ from sklearn.gaussian_process.kernels import Matern
 from .helpers import (UtilityFunction, PrintLog, acq_max, ensure_rng)
 from .target_space import TargetSpace
 import src.Bound as Bound
+import GPGraph
+import src.Parameters
+
 
 class BayesianOptimization(object):
 
@@ -71,6 +75,8 @@ class BayesianOptimization(object):
         # Verbose
         self.verbose = verbose
 
+        self.point_bounds = None
+
     def init(self, init_points):
         """
         Initialization method to kick start the optimization process. It is a
@@ -81,20 +87,26 @@ class BayesianOptimization(object):
         """
         # Concatenate new random points to possible existing
         # points from self.explore method.
-        rand_points = self.space.random_points(init_points)
+        params = src.Parameters.Parameters()
 
-        self.init_points.extend(rand_points)
+        if params.initial_points is not None:
+            self.init_points = params.initial_points
+        else:
+            low = []
+            #high = []
+            for key, value in self.pbounds.items():
+                for ti in value:
+                    low.append(ti[0])
+                    #high.append(ti[1])
+            low = np.asarray(low)
+            #high = np.asarray(high)
 
-        low = []
-        high = []
-        for ti in self.pbounds['t']:
-            low.append(ti[0])
-            high.append(ti[1])
-        low = np.asarray(low)
-        high = np.asarray(high)
+            self.init_points.extend([low])
+            #self.init_points.extend([high])
 
-        self.init_points.extend([low])
-        self.init_points.extend([high])
+            if init_points-1 > 0:
+                rand_points = self.space.random_points(init_points-1)
+                self.init_points.extend(rand_points)
 
         # self.init_points = list(set(round(i) for i in self.init_points[0]))
 
@@ -206,6 +218,7 @@ class BayesianOptimization(object):
         self.pbounds.update(new_bounds)
         self.space.set_bounds(new_bounds)
 
+
     def maximize(self,
                  init_points=5,
                  n_iter=5,
@@ -254,9 +267,11 @@ class BayesianOptimization(object):
             noise_sd = [noise_sd] * n_iter
         assert len(noise_sd) == n_iter
         '''
+
+        params = src.Parameters.Parameters()
+
         # Reset timer
         self.plog.reset_timer()
-
         # Set acquisition function
         self.util = UtilityFunction(kind=acq, kappa=kappa, xi=xi)
 
@@ -265,19 +280,41 @@ class BayesianOptimization(object):
             if self.verbose:
                 self.plog.print_header()
             self.init(init_points)
-
-        point_bounds = []
+        if params.plot_solution is True:
+            GPGraph.plot_gp(self, 0, 0, self.space.bounds[0][0], self.space.bounds[0][1])
+        if self.point_bounds is None:
+            point_bounds = []
+            for i in range(len(self.space.bounds)):
+                point_bounds.append([])
+        else:
+            point_bounds = self.point_bounds
+        # print('initialized point bounds:\n', point_bounds)
 
         LB = []
         UB = []
         for i in range(len(self.space.bounds)):
             LB.append(self.space.bounds[i][0])
             UB.append(self.space.bounds[i][1])
-            point_bounds.append([])
-        # LB, UB = self.space.bounds[0][0], self.space.bounds[0][1]
+
+        # adding initial points to point_bounds
         for point in self.init_points:
             for var in range(len(point)):
                 point_bounds[var] = Bound.add_bound(LB[var], UB[var], point_bounds[var], point[var])
+
+        # adding restricted regions to boundary lists
+        restricted = params.restricted
+        r_list = []
+        for i in range(len(self.space.bounds)):  # for each device
+            r_list.append([])
+            for r in range(len(restricted[i])):        # for each list of restrictions
+                for k in range(restricted[i][r][0], restricted[i][r][1]):         # for each point between the two bounds for restriction
+                    if LB[i] < k < UB[i]:
+                        r_list[i].append(k)
+        # print('restricted list:\n', r_list)
+        for i in range(len(r_list)):
+            for p in r_list[i]:
+                point_bounds[var] = Bound.add_bound(LB[i], UB[i], point_bounds[i], p)
+        print('point bounds list:\n', point_bounds)
 
         y_max = self.space.Y.max()
 
@@ -286,22 +323,39 @@ class BayesianOptimization(object):
 
         # Find unique rows of X to avoid GP from breaking
         self.gp.fit(self.space.X, self.space.Y)
+
+        p_x = []  # observed point x
+        p_mean = []  # "       "   mean
+        p_std = []  # "       "   std
+        #out_y = []
+        #out_x = []
+
         # mean, std = self.gp.predict(x, return_std=True)
         # Finding argmax of the acquisition function.
-        _, x_max, p_x, p_mean, p_std = acq_max(ac=self.util.utility,
-                                        gp=self.gp,
-                                        y_max=y_max,
-                                        bounds=self.space.bounds,
-                                        point_bounds=point_bounds,
-                                        random_state=self.random_state,
-                                        **self._acqkw)
+        _, x_max, _p_x, _p_mean, _p_std = acq_max(ac=self.util.utility,
+                                            gp=self.gp,
+                                            y_max=y_max,
+                                            bounds=self.space.bounds,
+                                            point_bounds=point_bounds,
+                                            random_state=self.random_state,
+                                            **self._acqkw)
 
-        #print('x_max:', x_max, 'mean:', mean, 'std:', std)
+        self.gp.fit(self.space.X, self.space.Y)
+        print('bounds range:', range(self.space.bounds[0][0], self.space.bounds[0][1]))
+        _p_x = []
+        _p_y = []
+        for x in range(self.space.bounds[0][0], self.space.bounds[0][1]):
+            mu, sigma = self.gp.predict(x, return_std=True)
+            _p_x.append(x)
+            _p_y.append(mu)
+
+        p_x.append(_p_x)
+        p_mean.append(_p_y)
+        #p_std.append(_p_std)
 
         for var in range(len(x_max)):
             point_bounds[var] = Bound.add_bound(LB[var], UB[var], point_bounds[var], round(x_max[var]))
-
-
+            print(point_bounds[var], round(x_max[var]))
         # point_bounds = Bound.add_bound(LB, UB, point_bounds, round(x_max))
 
         # Print new header
@@ -313,11 +367,6 @@ class BayesianOptimization(object):
         # of the target function is found and passed to the acq_max function.
         # The arg_max of the acquisition function is found and this will be
         # the next probed value of the target function in the next round.
-        tried_points = []
-        p_x    = []  # observed point x
-        p_y    = []  #    "       "   y
-        p_mean = []  #    "       "   mean
-        p_std  = []  #    "       "   std
         for i in range(n_iter):
 
             # Append most recently generated values to X and Y arrays
@@ -328,7 +377,8 @@ class BayesianOptimization(object):
                 print('Step    |    Value    |        t        |')
                 print(str(i)+'.  |        ', y, ' |  ', x_max)
                 print('________________________________________|')
-
+            # out_y.append(y)
+            # out_x.append(x_max)
             # Updating the GP.
             self.gp.fit(self.space.X, self.space.Y)
 
@@ -342,7 +392,7 @@ class BayesianOptimization(object):
                 y_max = self.space.Y[-1]
 
             # Maximize acquisition function to find next probing point
-            _, x_max, p_x, p_mean, p_std = acq_max(ac=self.util.utility,
+            _, x_max, _p_x, _p_mean, _p_std = acq_max(ac=self.util.utility,
                                             gp=self.gp,
                                             y_max=y_max,
                                             bounds=self.space.bounds,
@@ -350,7 +400,18 @@ class BayesianOptimization(object):
                                             random_state=self.random_state,
                                             **self._acqkw)
 
-            # print('x_max:', x_max, 'mean:', mean, 'std:', std)
+            self.gp.fit(self.space.X, self.space.Y)
+            print('bounds range:', range(self.space.bounds[0][0], self.space.bounds[0][1]))
+            _p_x = []
+            _p_y = []
+            for x in range(self.space.bounds[0][0], self.space.bounds[0][1]):
+                mu, sigma = self.gp.predict(x, return_std=True)
+                _p_x.append(x)
+                _p_y.append(mu)
+
+            p_x.append(_p_x)
+            p_mean.append(_p_y)
+            #p_std.append(_p_std)
 
             # Sets up the bounds used to select points --- this section is because we need to choose integers
             #for i in range(len(x_max)):
@@ -360,14 +421,10 @@ class BayesianOptimization(object):
                 point_bounds[var] = Bound.add_bound(LB[var], UB[var], point_bounds[var], round(x_max[var]))
             # Keep track of total number of iterations
             i += 1
-
-        #print(p_x)
-        #print(p_mean)
-        #print(p_std)
-
-        return p_x, p_mean, p_std
-
-
+            if params.plot_solution is True:
+                GPGraph.plot_gp(self, 0, 0, self.space.bounds[0][0], self.space.bounds[0][1])
+        self.point_bounds = point_bounds
+        return p_x, p_mean, p_std  # , out_x, out_y
 
     def points_to_csv(self, file_name):
         """

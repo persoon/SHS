@@ -59,13 +59,15 @@ def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100
     for i in range(len(point_bounds)):
 
         if len(point_bounds[i]) == 0:
+            print('point_bounds', point_bounds)
+            print('bounds', bounds)
             point_bounds[i].append((bounds[i][0], bounds[i][0]))
             point_bounds[i].append((bounds[i][1], bounds[i][1]))
 
         if point_bounds[i][0][0] != bounds[i][0]:
             point_bounds[i].insert(0, (bounds[i][0], bounds[i][0]))
         if point_bounds[i][len(point_bounds[i])-1][1] != bounds[i][1]:
-            point_bounds[i].insert(len(point_bounds[i]), (bounds[i][1], bounds[i][1]))
+            point_bounds[i].insert(len(point_bounds[i]), (bounds[i][1]-0.5, bounds[i][1]))
 
     solutions = []
     #print('POINTS:', point_bounds)
@@ -97,7 +99,7 @@ def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100
         max_acq = ys.max()
 
         # Explore the parameter space more thoroughly
-        x_seeds = random_state.randint(bounds[:, 0], bounds[:, 1], size=(n_iter, bounds.shape[0]))
+        x_seeds = random_state.uniform(bounds[:, 0], bounds[:, 1], size=(n_iter, bounds.shape[0]))
         #print('number of x_seeds:', len(np.unique(x_seeds)))
         for x_try in np.unique(x_seeds):
             #print('x_try:', x_try)
@@ -110,7 +112,7 @@ def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100
             val, mean, std = ac(res.x.reshape(1, -1), gp=gp, y_max=y_max)  # need these to see confidence interval
             p_x.append(x_try), p_mean.append(mean), p_std.append(std)
             # Store it if better than previous minimum(maximum).
-            res.fun[0] = round(res.fun[0], 1)
+            #res.fun[0] = round(res.fun[0], 1)
             if max_acq is None or -res.fun > max_acq:
                 #if max_acq is not None:
                     #print('y_max:', y_max)

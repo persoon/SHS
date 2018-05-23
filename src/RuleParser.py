@@ -6,6 +6,20 @@
 # Returns:
 #   rules - List of all of all rules contained in the file
 
+# ~~~~ CSV Keys ~~~~~~~~~~~~~~~~~~~~~~
+# index |   parameter
+# ------------------------------------
+#   0   |   active(1)/passive(2)
+#   1   |   rule type
+#   2   |   location
+#   3   |   state property
+#   4   |   predicate (lt,gt,eq)
+#   5   |   goal value
+#   6   |   time prefix (before/after)
+#   7   |   time 1
+#   8   |   time 2
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 import csv
 import src.Rule as r
 from collections import defaultdict

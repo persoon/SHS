@@ -95,11 +95,14 @@ class Solver:
         # self.model.write('problem.lp')
 
     # resets the solver, preparing it for a new solution
-    def reset(self, params):
+    def reset(self, params, rules=None):
         self.model = src.Model.Model().reset_solver()
         self.params = params
         self.horizon = params.horizon
-        self.rules = params.rules
+        if rules is None:
+            self.rules = params.rules
+        else:
+            self.rules = rules
         self.devices = params.devices
 
         dcons = DCons.DeviceConstraints(model=self.model, params=self.params, devices=self.devices)

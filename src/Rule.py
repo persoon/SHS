@@ -12,15 +12,17 @@
 #   time1       - Time step the rule applies to
 #   time2       - Secondary time step used for 'within' rules
 
+
 class Rule:
     def __init__(self, loc, sp, predicate,
-                 prefix, horizon, active=1, goal=None, time1=-1, time2=-1, r_type=None):
+                 prefix, horizon, active=True, goal=None, time1=-1, time2=-1, r_type=None):
         self.active = active
         self.r_type = r_type
         self.location = loc
         self.sp = sp
-        self.predicate = predicate # <=, =, >=
+        self.predicate = predicate  # <=, =, >=
         self.goal = goal
+        self.horizon = horizon
         if not active:  # passive rules don't have a time prefix (if they did it would be 'always')
             self.prefix = None
             self.time1 = 0
@@ -36,7 +38,7 @@ class Rule:
         elif prefix == 'after':
             self.prefix = prefix
             self.time1 = time1
-            self.time2 = horizon # NOTE: this is one more than it should be but this allows us to keep before rule exclusive of time2
+            self.time2 = horizon  # NOTE: should be horizon-1 but this allows us to keep before rule exclusive of time2
         elif prefix == 'at':
             self.prefix = prefix
             self.time1 = time1

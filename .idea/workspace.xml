@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8221c1c0-ccf8-414e-9ac2-9d6b93116783" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/writeReport.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Main.py" afterPath="$PROJECT_DIR$/src/Main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Oracle.py" afterPath="$PROJECT_DIR$/src/Oracle.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Parameters.py" afterPath="$PROJECT_DIR$/src/Parameters.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/PolynomGen.py" afterPath="$PROJECT_DIR$/src/PolynomGen.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/bayes_opt/helpers.py" afterPath="$PROJECT_DIR$/src/bayes_opt/helpers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/testGenerator.py" afterPath="$PROJECT_DIR$/src/testGenerator.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/testRunner.py" afterPath="$PROJECT_DIR$/src/testRunner.py" />
     </list>
     <ignored path="$PROJECT_DIR$/.idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -779,7 +771,14 @@
       <option name="project" value="LOCAL" />
       <updated>1527066676139</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="solver w/o multiple devices&#10;generates and runs tests for our problem and rank 1 matrix's">
+      <created>1529106291300</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1529106291300</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TodoView">
@@ -842,7 +841,8 @@
     <MESSAGE value="1. Bounds lists for each variable update appropriately when multiple variables in Bayesian Optimization&#10;2. Fake user expectations for each rule calculated independently&#10;3. Solver updates rules with new values for all tested variables whenever target function called in acquisition function&#10;4. Solver returns a really small (-2^15) value when no solution is possible (dependencies are violated)&#10;5. Bayesian optimization for 'after' rules works in addition to 'before' which already worked (I needed to set this up because dependencies are never violated when changing 'before' rules because we are giving the solver more time to work with instead of less).&#10;6. Smarthome.ipynb describes the system" />
     <MESSAGE value="Extracted confidence interval information from acquisition function,&#10;  - save it at end of run&#10;  - would only need a simple if-statement to terminate at confidence level&#10;Tested points graphed&#10;Confidence Interval graphed&#10;Work put into multiple alternating schedules, almost finished with that" />
     <MESSAGE value="- generate tests&#10;  + rules&#10;  + 192 timesteps&#10;  + 24 timesteps&#10;  + initial values&#10;- run test files&#10;  + calculate errors per timestep (something might be wrong with this)" />
-    <option name="LAST_COMMIT_MESSAGE" value="- generate tests&#10;  + rules&#10;  + 192 timesteps&#10;  + 24 timesteps&#10;  + initial values&#10;- run test files&#10;  + calculate errors per timestep (something might be wrong with this)" />
+    <MESSAGE value="solver w/o multiple devices&#10;generates and runs tests for our problem and rank 1 matrix's" />
+    <option name="LAST_COMMIT_MESSAGE" value="solver w/o multiple devices&#10;generates and runs tests for our problem and rank 1 matrix's" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

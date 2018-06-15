@@ -78,6 +78,8 @@ class Parameters:
     y_ind = -1
     scale = False  # temporary solution for target function to only scale when I want it to
 
+    poly = None
+
     # if true, plots solution so you can see a visual representation of what's happening
     plot_solution = False
 

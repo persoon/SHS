@@ -30,9 +30,9 @@ class PolynomGen:
         # our x-roots should all be between 0 and 191 --- TODO: make them all between 0 and preference_horizon - 1
         self.poly.append(0)  # there should be a root at 0 (user should expect 0 there)
         for i in range(num-1):
-            r = int(round(random.random() * self.n))
+            r = int(round(random.random() * (self.n*1.8)))
             while r in self.poly:
-                r = int(round(random.random() * self.n))
+                r = int(round(random.random() * (self.n*1.8)))
             self.poly.append(r)
 
         # WE PROBABLY WANT IT TO SPIKE....

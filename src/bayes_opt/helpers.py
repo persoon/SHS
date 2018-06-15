@@ -121,7 +121,6 @@ def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100
                 x_max = res.x
                 max_acq = -res.fun
 
-
         for i in range(len(x_max)):
             if floor(x_max[i]) == floor(bounds[i][0]):
                 x_max[i] = ceil(x_max[i])

@@ -101,9 +101,10 @@ def acq_max(ac, gp, y_max, bounds, random_state, point_bounds=None, n_warmup=100
         # Explore the parameter space more thoroughly
         x_seeds = random_state.uniform(bounds[:, 0], bounds[:, 1], size=(n_iter, bounds.shape[0]))
         #print('number of x_seeds:', len(np.unique(x_seeds)))
-        for x_try in np.unique(x_seeds):
+        for x_try in x_seeds:
             #print('x_try:', x_try)
             # Find the minimum of minus the acquisition function
+            #print(x_try.reshape(1,-1))
             res = minimize(lambda x: -ac(x.reshape(1, -1), gp=gp, y_max=y_max)[0],
                            x_try.reshape(1, -1),
                            bounds=bounds,

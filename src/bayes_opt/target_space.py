@@ -137,6 +137,8 @@ class TargetSpace(object):
             target function value.
         """
         x = np.asarray(x).ravel()
+        print(self.dim)
+        print(x.size)
         assert x.size == self.dim, 'x must have the same dimensions'
 
         if x in self:

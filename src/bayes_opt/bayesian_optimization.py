@@ -111,6 +111,7 @@ class BayesianOptimization(object):
         # self.init_points = list(set(round(i) for i in self.init_points[0]))
 
         # Evaluate target function at all initialization points
+        print(self.init_points)
         for x in self.init_points:
             y = self._observe_point(x)
 
@@ -341,11 +342,14 @@ class BayesianOptimization(object):
                                             **self._acqkw)
 
         self.gp.fit(self.space.X, self.space.Y)
-        print('bounds range:', range(self.space.bounds[0][0], self.space.bounds[0][1]))
+        # print('bounds range:', range(self.space.bounds[0][0], self.space.bounds[0][1]))
         _p_x = []
         _p_y = []
-        for x in range(self.space.bounds[0][0], self.space.bounds[0][1]):
-            mu, sigma = self.gp.predict(x, return_std=True)
+        bounds_np = np.asarray(self.space.bounds)
+        testX = self.random_state.uniform(bounds_np[:, 0], bounds_np[:, 1], size=(150, bounds_np.shape[0]))
+        for x in testX:
+            x = np.rint(x)
+            mu, sigma = self.gp.predict(x.reshape(1, -1), return_std=True)
             _p_x.append(x)
             _p_y.append(mu)
 
@@ -401,13 +405,25 @@ class BayesianOptimization(object):
                                             **self._acqkw)
 
             self.gp.fit(self.space.X, self.space.Y)
-            print('bounds range:', range(self.space.bounds[0][0], self.space.bounds[0][1]))
+            # print('bounds range:', range(self.space.bounds[0][0], self.space.bounds[0][1]))
+            _p_x = []
+            _p_y = []
+            bounds_np = np.asarray(self.space.bounds)
+            testX = self.random_state.uniform(bounds_np[:, 0], bounds_np[:, 1], size=(1000, bounds_np.shape[0]))
+            for x in testX:
+                x = np.rint(x)
+                mu, sigma = self.gp.predict(x.reshape(1, -1), return_std=True)
+                _p_x.append(x)
+                _p_y.append(mu)
+
+            '''
             _p_x = []
             _p_y = []
             for x in range(self.space.bounds[0][0], self.space.bounds[0][1]):
                 mu, sigma = self.gp.predict(x, return_std=True)
                 _p_x.append(x)
                 _p_y.append(mu)
+            '''
 
             p_x.append(_p_x)
             p_mean.append(_p_y)

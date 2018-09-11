@@ -109,6 +109,9 @@ class Oracle:
             if r > 0:
                 ratio = ratio + 1
 
+            if ratio > 4:
+                ratio = 1
+
             rule = self.rules[0]
             init = [0, len(self.yvals[0])-1]  # init always has the starting value
             print('initial init:', init)
@@ -413,7 +416,7 @@ class Oracle:
             val = []
             for i in range(len(sline)):
                 if sline[i] != '\n':
-                    if int(sline[i]) != -1:
+                    if sline[i] != '' and int(sline[i]) != -1:
                         val.append([i])
 
             initial_points.append(val)

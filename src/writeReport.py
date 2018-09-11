@@ -60,5 +60,5 @@ def write_file(runs, horizon=None, num_dev=None, num_iter=None, filename='test_r
     print(aggregator)
 
 
-write_file(runs=[[[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]], [[1, 2, 3, 4, 5], [0, 0, 0, 0, 0]]], horizon=24, num_dev=2, num_iter=5)
+# write_file(runs=[[[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]], [[1, 2, 3, 4, 5], [0, 0, 0, 0, 0]]], horizon=24, num_dev=2, num_iter=5)
 

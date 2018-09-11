@@ -80,6 +80,9 @@ class Parameters:
 
     poly = None
 
+    # tested points for multiple rules in same bayesian optimization:
+    tested_points = None
+
     # if true, plots solution so you can see a visual representation of what's happening
     plot_solution = False
 
